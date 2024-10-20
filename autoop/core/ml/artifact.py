@@ -16,6 +16,11 @@ class Artifact(BaseModel):
         super().__init__()
         self.asset["name"] = name
         self.asset["version"] = version
+        self.asset["asset_path"] = asset_path
+        self.asset["tags"] = tags
+        self.asset["metadata"] = metadata
+        self.asset["data"] = data
+        self.asset["type"] = type
 
 
 
