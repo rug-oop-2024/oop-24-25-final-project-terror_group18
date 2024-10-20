@@ -23,4 +23,3 @@ class Artifact(BaseModel):
         self.asset["type"] = type
 
 
-

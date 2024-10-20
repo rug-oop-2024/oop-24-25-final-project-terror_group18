@@ -13,7 +13,8 @@ def get_metric(name: str):
     raise NotImplementedError("To be implemented.")
 
 class Metric(...):
-    """Base class for all metrics.
+    """
+    Base class for all metrics.
     """
     # your code here
     # remember: metrics take ground truth and prediction as input and return a real number
