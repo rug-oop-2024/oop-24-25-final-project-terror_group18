@@ -1,11 +1,16 @@
 from sklearn.svm import SVC
 import numpy as np
 
+from autoop.core.ml.model import Model
 
-class Support_Vector_Classifier(SVC):
+
+class SupportVectorClassifier(SVC, Model):
 
     def __init__(self, kernel='linear'):
-        super().__init__(kernel=kernel)
+        SVC().__init__(kernel=kernel)
+        Model().__init__()
+        self.type = "classification"
+        self.name = "Support Vector Classifier"
 
     def fit(self, train_x: np.ndarray, train_y: np.array, sample_weight=None) -> None:
         super().fit(self, train_x, train_y)
