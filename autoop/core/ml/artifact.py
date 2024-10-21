@@ -11,7 +11,7 @@ class Artifact(BaseModel):
                  asset_path: str = "N/A",
                  tags: list = [],
                  metadata: dict = {},
-                 data: str = "N/A",
+                 data: bytes = "N/A",
                  type: str = "N/A", **kwargs):
         super().__init__()
         encoded_id = base64.b64encode(
