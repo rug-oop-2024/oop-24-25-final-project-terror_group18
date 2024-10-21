@@ -4,6 +4,7 @@ import base64
 
 class Artifact(BaseModel):
     asset: dict
+    id: str
 
     def __init__(self, name: str,  # default values fix
                  version: str = "N/A",
@@ -21,8 +22,14 @@ class Artifact(BaseModel):
         self.asset["metadata"] = metadata
         self.asset["data"] = data
         self.asset["type"] = type
-
-    # data= artifacts["scalar"] ... in pipeline.py??
-    # data= artifacts["encoder"] ... in pipeline.py??
+        id = 
 
 
+    def read(self) -> bytes:
+        """
+        Read artifact data
+        """
+        return base64.b64decode(self.asset["artifact_id"])
+    
+    def save(self, data: bytes):
+        self.asset["data"] = base64.b64encode(data)
