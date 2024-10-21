@@ -3,18 +3,24 @@ import base64
 
 
 class Artifact(BaseModel):
-    asset: dict
-    id: str
+    asset: dict = Field(default_factory=dict)
+    id: str = Field(default_factory=str)
 
-    def __init__(self, name: str,  # default values fix
+    def __init__(self, name: str,
                  version: str = "N/A",
                  asset_path: str = "N/A",
                  tags: list = [],
                  metadata: dict = {},
                  data: str = "N/A",
-                 type: str = "N/A"):
-
+                 type: str = "N/A", **kwargs):
         super().__init__()
+        encoded_id = base64.b64encode(
+            asset_path.encode('utf-8')
+        ).decode('utf-8')
+
+        self.id = f"{encoded_id}:{version}"
+
+        self.asset["artifact_id"] = self.id
         self.asset["name"] = name
         self.asset["version"] = version
         self.asset["asset_path"] = asset_path
@@ -22,14 +28,24 @@ class Artifact(BaseModel):
         self.asset["metadata"] = metadata
         self.asset["data"] = data
         self.asset["type"] = type
-        id = 
 
+
+
+        for key, value in kwargs:
+            setattr(self, key, value)
 
     def read(self) -> bytes:
         """
         Read artifact data
         """
-        return base64.b64decode(self.asset["artifact_id"])
-    
+        return self.asset["data"]
+
     def save(self, data: bytes):
+        """
+        Args:
+            data:
+
+        Returns:
+
+        """
         self.asset["data"] = base64.b64encode(data)
