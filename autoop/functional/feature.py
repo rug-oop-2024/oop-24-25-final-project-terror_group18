@@ -18,10 +18,11 @@ def detect_feature_types(dataset: Dataset) -> list[Feature]:
         if df.isnull().values.any():
             df.dropna()
             # message?
-
         feature = Feature(column)
         if is_numeric_dtype(df[column].dtype):
             feature.type = "numeric"
+        else:
+            feature.type = "categorical"
 
         feature_list.append(feature)
 

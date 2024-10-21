@@ -1,13 +1,12 @@
 
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from autoop.core.ml.artifact import Artifact
 import numpy as np
 from copy import deepcopy
 from typing import Literal
-from pydantic import BaseModel
 
 
-class Model(BaseModel):
+class Model(ABC):
     type: str
 
     def __init__(self):

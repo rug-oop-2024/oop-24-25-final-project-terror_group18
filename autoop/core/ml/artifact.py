@@ -12,9 +12,13 @@ class Artifact(BaseModel):
                  tags: list = [],
                  metadata: dict = {},
                  data: str = "N/A",
-                 type: str = "N/A"):
+                 type: str = "N/A", **kwargs):
 
         super().__init__()
+        self.id = base64.b64encode(
+            asset_path.encode('utf-8')
+            ).decode('utf-8')
+
         self.asset["name"] = name
         self.asset["version"] = version
         self.asset["asset_path"] = asset_path
@@ -22,7 +26,9 @@ class Artifact(BaseModel):
         self.asset["metadata"] = metadata
         self.asset["data"] = data
         self.asset["type"] = type
-        id = 
+
+        for key, value
+
 
 
     def read(self) -> bytes:
