@@ -3,10 +3,10 @@ import base64
 
 
 class Artifact(BaseModel):
-    asset: dict
-    id: str
+    asset: dict = Field(default_factory=dict)
+    id: str = Field(default_factory=str)
 
-    def __init__(self, name: str,  # default values fix
+    def __init__(self, name: str,
                  version: str = "N/A",
                  asset_path: str = "N/A",
                  tags: list = [],
@@ -14,9 +14,11 @@ class Artifact(BaseModel):
                  data: str = "N/A",
                  type: str = "N/A", **kwargs):
         super().__init__()
-        self.id = base64.b64encode(
+        encoded_id = base64.b64encode(
             asset_path.encode('utf-8')
         ).decode('utf-8')
+
+        self.id = f"{encoded_id}:{version}"
 
         self.asset["artifact_id"] = self.id
         self.asset["name"] = name
@@ -27,6 +29,8 @@ class Artifact(BaseModel):
         self.asset["data"] = data
         self.asset["type"] = type
 
+
+
         for key, value in kwargs:
             setattr(self, key, value)
 
@@ -34,7 +38,7 @@ class Artifact(BaseModel):
         """
         Read artifact data
         """
-        return base64.b64decode(self.asset["artifact_id"])
+        return self.asset["data"]
 
     def save(self, data: bytes):
         """
