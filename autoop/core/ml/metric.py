@@ -13,6 +13,8 @@ METRICS = [
     "confusion_matrix"
 
 ]  # add the names (in strings) of the metrics you implement
+
+
 # https://neptune.ai/blog/performance-metrics-in-machine-learning-complete-guide
 
 def get_metric(name: str):
@@ -54,7 +56,7 @@ class Metric(ABC):
 
 # add here concrete implementations of the Metric class
 
-class MSE(Metric):
+class MeanSquaredError(Metric):
 
     def __init__(self, name):
         super().__init__(name)
@@ -69,9 +71,65 @@ class Accuracy(Metric):
 
     def __init__(self, name):
         super().__init__(name)
+
     def _implementation(self, y_true, y_pred):
         return  # ...
 
 
-for metric_name in METRICS:
-    Metric(metric_name)
+class ConfusionMatrix(Metric):  # binary classification metric
+    def __init__(self, name):
+        super().__init__(name)
+
+    def find_TP(self, y_true, y_pred):
+        # counts the number of true positives (y = 1, y_pred = 1)
+        return sum((y_true == 1) & (y_pred == 1))
+
+    def find_FN(self, y_true, y_pred):
+        # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
+        return sum((y_true == 1) & (y_pred == 0))
+
+    def find_FP(self, y_true, y_pred):
+        # counts the number of false positives (y = 0, y_pred = 1) Type-I error
+        return sum((y_true == 0) & (y_pred == 1))
+
+    def find_TN(self, y_true, y_pred):
+        # counts the number of true negatives (y = 0, y_pred = 0)
+        return sum((y_true == 0) & (y_pred == 0))
+
+    def _implementation(self, y_true, y_pred):
+        return  [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
+                 [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
+
+
+class Precision(Metric):
+    def __init__(self, name):
+        super().__init__(name)
+
+    def _implementation(self, y_true, y_pred):
+        TP = find_TP(y, y_hat)
+        FN = find_FN(y, y_hat)
+        FP = find_FP(y, y_hat)
+        TN = find_TN(y, y_hat)
+        return  # ...
+
+
+class Recall(Metric):
+    def __init__(self, name):
+        super().__init__(name)
+
+    def _implementation(self, y_true, y_pred):
+        return  # ...
+
+
+class F1Score(Metric):
+    def __init__(self, name):
+        super().__init__(name)
+
+    def _implementation(self, y_true, y_pred):
+        return  # ...
+
+
+
+
+MeanSquaredError("mean_squared_error")
+Accuracy("accuracy")
