@@ -6,10 +6,10 @@ from overrides import override
 
 METRICS = [
     "mean_squared_error",
+    "root_mean_squared_error"
     "accuracy",
     "precision",
     "recall",
-    "f1-score",
     "confusion_matrix"
 
 ]  # add the names (in strings) of the metrics you implement
@@ -127,12 +127,12 @@ class Recall(Metric, ConfusionMatrix):
         return TP/(TP+FN)
 
 
-class F1Score(Metric):
+class RootMeanSquaredError(Metric, MeanSquaredError):
     def __init__(self, name):
         super().__init__(name)
 
     def _implementation(self, y_true, y_pred):
-        return  # ...
+        return np.sqrt(super())
 
 
 
