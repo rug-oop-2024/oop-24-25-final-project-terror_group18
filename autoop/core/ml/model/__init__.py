@@ -16,4 +16,7 @@ CLASSIFICATION_MODELS = [
 
 def get_model(model_name: str) -> Model:
     """Factory function to get a model by name."""
-    raise NotImplementedError("To be implemented.")
+    for model in Model.models:
+        if model.name == model_name:
+            return model
+    return None
