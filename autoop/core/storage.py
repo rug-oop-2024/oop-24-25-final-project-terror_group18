@@ -79,8 +79,10 @@ class LocalStorage(Storage):
     def list(self, prefix: str) -> List[str]:
         path = self._join_path(prefix)
         self._assert_path_exists(path)
-        keys = glob(path + "/**/*", recursive=True)
-        return list(filter(os.path.isfile, keys))
+        keys = glob(path + "//*", recursive=True)
+        # Extract relative paths and replace backslashes with forward slashes
+        relative_keys = [os.path.relpath(key, self._base_path).replace("\\", "/") for key in keys if os.path.isfile(key)]
+        return relative_keys
 
     def _assert_path_exists(self, path: str):
         if not os.path.exists(path):
