@@ -7,7 +7,7 @@ from autoop.core.ml.model import Model
 class KNearestNeighbors(KNeighborsClassifier, Model):
 
     def __init__(self, n_neighbors=5):
-        KNearestNeighbors().__init__(n_neighbors=n_neighbors)
+        KNeighborsClassifier().__init__(n_neighbors=n_neighbors)
         Model().__init__()
         self.type = "classification"
         self.name = "KNN"
