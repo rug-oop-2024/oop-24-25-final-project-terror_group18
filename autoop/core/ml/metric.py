@@ -128,14 +128,16 @@ class Recall(Metric, ConfusionMatrix):
 
 
 class RootMeanSquaredError(Metric, MeanSquaredError):
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true, y_pred):
+    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sqrt(super())
-
-
 
 
 MeanSquaredError("mean_squared_error")
 Accuracy("accuracy")
+ConfusionMatrix("confusion_matrix")
+Precision("precision")
+Recall("recall")
+RootMeanSquaredError("root_mean_squared_error")
