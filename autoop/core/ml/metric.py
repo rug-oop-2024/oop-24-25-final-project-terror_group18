@@ -82,19 +82,19 @@ class ConfusionMatrix(Metric):  # binary classification metric
 
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true positives (y = 1, y_pred = 1)
-        return sum((y_true == 1) & (y_pred == 1))
+        return np.sum((y_true == 1) & (y_pred == 1))
 
     def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
-        return sum((y_true == 1) & (y_pred == 0))
+        return np.sum((y_true == 1) & (y_pred == 0))
 
     def find_FP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false positives (y = 0, y_pred = 1) Type-I error
-        return sum((y_true == 0) & (y_pred == 1))
+        return np.sum((y_true == 0) & (y_pred == 1))
 
     def find_TN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true negatives (y = 0, y_pred = 0)
-        return sum((y_true == 0) & (y_pred == 0))
+        return np.sum((y_true == 0) & (y_pred == 0))
 
     def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> list:
         return [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
