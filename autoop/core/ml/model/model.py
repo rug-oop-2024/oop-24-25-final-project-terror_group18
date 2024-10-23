@@ -10,15 +10,21 @@ from typing import Literal
 
 
 class Model(ABC):   # Artifact?
+
+    _models = []
     name: str = "model"
-    type: Literal["classification", "regression"] = (
+    _type: Literal["classification", "regression"] = (
         Field(default_factory=Literal["classification", "regression"]))
 
-    '''def __init__(self):
-        pass'''
+    def __init__(self):
+        self._models.append(self)
 
     def __str__(self):
-        return f"Model(type={self.type})"
+        return f"Model(type={self._type})"
+
+    @property
+    def models(self):
+        return self._models
 
     @abstractmethod
     def fit(self, train_X: np.ndarray, train_y: np.ndarray) -> None:
