@@ -67,15 +67,6 @@ class MeanSquaredError(Metric):
         return mse.mean()
 
 
-class Accuracy(Metric):
-
-    def __init__(self, name: str):
-        super().__init__(name)
-
-    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        return  # ...
-
-
 class ConfusionMatrix(Metric):  # binary classification metric
     def __init__(self, name: str):
         super().__init__(name)
@@ -100,6 +91,19 @@ class ConfusionMatrix(Metric):  # binary classification metric
         return [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
                 [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
 
+
+class Accuracy(Metric, ConfusionMatrix):
+
+    def __init__(self, name: str):
+        super().__init__(name)
+
+    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        TP = super().find_TP(y_true, y_pred)
+        FP = super().find_FP(y_true, y_pred)
+        TN = super().find_TN(y_true, y_pred)
+        FN = super().find_FN(y_true, y_pred)
+
+        return TP + TN / TP + TN + FP + FN
 
 class Precision(Metric, ConfusionMatrix):
     """
