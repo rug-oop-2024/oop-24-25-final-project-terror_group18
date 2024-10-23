@@ -58,45 +58,45 @@ class Metric(ABC):
 
 class MeanSquaredError(Metric):
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name)
 
     @override
-    def _implementation(self, y_true, y_pred):
+    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         mse = (y_true - y_pred) ** 2
         return mse.mean()
 
 
 class Accuracy(Metric):
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true, y_pred):
+    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return  # ...
 
 
 class ConfusionMatrix(Metric):  # binary classification metric
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name)
 
-    def find_TP(self, y_true, y_pred):
+    def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true positives (y = 1, y_pred = 1)
         return sum((y_true == 1) & (y_pred == 1))
 
-    def find_FN(self, y_true, y_pred):
+    def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
         return sum((y_true == 1) & (y_pred == 0))
 
-    def find_FP(self, y_true, y_pred):
+    def find_FP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false positives (y = 0, y_pred = 1) Type-I error
         return sum((y_true == 0) & (y_pred == 1))
 
-    def find_TN(self, y_true, y_pred):
+    def find_TN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true negatives (y = 0, y_pred = 0)
         return sum((y_true == 0) & (y_pred == 0))
 
-    def _implementation(self, y_true, y_pred):
+    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> list:
         return [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
                 [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
 
@@ -105,10 +105,10 @@ class Precision(Metric, ConfusionMatrix):
     """
     Focuses on type I error of False Positives.
     """
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true, y_pred):
+    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
         return TP/(TP+FP)
@@ -118,10 +118,10 @@ class Recall(Metric, ConfusionMatrix):
     """
     Focuses on type II error of False Negatives.
     """
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true, y_pred):
+    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
         return TP/(TP+FN)
