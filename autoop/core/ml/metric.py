@@ -97,28 +97,34 @@ class ConfusionMatrix(Metric):  # binary classification metric
         return sum((y_true == 0) & (y_pred == 0))
 
     def _implementation(self, y_true, y_pred):
-        return  [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
-                 [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
+        return [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
+                [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
 
 
-class Precision(Metric):
+class Precision(Metric, ConfusionMatrix):
+    """
+    Focuses on type I error of False Positives.
+    """
     def __init__(self, name):
         super().__init__(name)
 
     def _implementation(self, y_true, y_pred):
-        TP = find_TP(y, y_hat)
-        FN = find_FN(y, y_hat)
-        FP = find_FP(y, y_hat)
-        TN = find_TN(y, y_hat)
-        return  # ...
+        TP = super().find_TP(y_true, y_pred)
+        FP = super().find_FP(y_true, y_pred)
+        return TP/(TP+FP)
 
 
-class Recall(Metric):
+class Recall(Metric, ConfusionMatrix):
+    """
+    Focuses on type II error of False Negatives.
+    """
     def __init__(self, name):
         super().__init__(name)
 
     def _implementation(self, y_true, y_pred):
-        return  # ...
+        TP = super().find_TP(y_true, y_pred)
+        FN = super().find_FN(y_true, y_pred)
+        return TP/(TP+FN)
 
 
 class F1Score(Metric):
