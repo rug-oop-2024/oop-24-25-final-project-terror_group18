@@ -10,12 +10,16 @@ automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 
 # option = st.selectbox(glob("**/*.csv", recursive=True))
-option = st.file_uploader("Choose a file")
-#option = st.selectbox("Load Previous Dataset", glob("**/*.csv", recursive=True))
+option = st.selectbox("Choose Dataset", ["UPLOAD", datasets])
+if option == "UPLOAD":
+    option = st.file_uploader("Choose a file")
 if option is not None:
     df = pd.read_csv(option)
     st.write(df.head())
-    options = st.multiselect(df.columns)
+    #options = st.multiselect(df.columns)
+    if st.button("Save Dataset"):
+        automl.registry.register(Dataset(df))
+        st.write("Dataset saved.")
 else:
     st.write('Please select something')
 
