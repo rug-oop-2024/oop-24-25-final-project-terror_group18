@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Any, Callable
 import numpy as np
+import pandas as pd
 from overrides import override
 
 METRICS = [
@@ -62,7 +63,7 @@ class MeanSquaredError(Metric):
         super().__init__(name)
 
     @override
-    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    def _implementation(self, y_true: Any, y_pred: Any) -> float:
         mse = (y_true - y_pred) ** 2
         return mse.mean()
 
@@ -70,7 +71,7 @@ class MeanSquaredError(Metric):
 class ConfusionMatrix(Metric):  # binary classification metric
     def __init__(self, name: str):
         super().__init__(name)
-
+# make it ONE HOT ENCODINGGG
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true positives (y = 1, y_pred = 1)
         return np.sum((y_true == 1) & (y_pred == 1))
@@ -92,7 +93,7 @@ class ConfusionMatrix(Metric):  # binary classification metric
                 [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
 
 
-class Accuracy(Metric, ConfusionMatrix):
+class Accuracy(ConfusionMatrix):
 
     def __init__(self, name: str):
         super().__init__(name)
@@ -118,7 +119,7 @@ class Precision(Metric, ConfusionMatrix):
         return TP/(TP+FP)
 
 
-class Recall(Metric, ConfusionMatrix):
+class Recall(ConfusionMatrix):
     """
     Focuses on type II error of False Negatives.
     """
@@ -131,7 +132,7 @@ class Recall(Metric, ConfusionMatrix):
         return TP/(TP+FN)
 
 
-class RootMeanSquaredError(Metric, MeanSquaredError):
+class RootMeanSquaredError(MeanSquaredError):
     def __init__(self, name: str):
         super().__init__(name)
 
