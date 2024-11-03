@@ -4,9 +4,10 @@ import base64
 
 
 class Artifact(BaseModel):
-    asset: dict = Field(default_factory=dict)
+    #asset: dict = Field(default_factory=dict)
     id: str = Field(default_factory=str)
     data: bytes = Field(default_factory=bytes)
+    name: str = Field(default_factory=str)
 
     def __init__(self, name: str,
                  version: str = "N/A",
@@ -22,15 +23,13 @@ class Artifact(BaseModel):
 
         self.id = f"{encoded_id}:{version}"
         self.data = data
-
-        self.asset["artifact_id"] = self.id
-        self.asset["name"] = name
-        self.asset["version"] = version
-        self.asset["asset_path"] = asset_path
-        self.asset["tags"] = tags
-        self.asset["metadata"] = metadata
-        self.asset["data"] = data
-        self.asset["type"] = type
+        self.name = name
+        self.version = version
+        self.asset_path = asset_path
+        self.tags = tags
+        self.metadata = metadata
+        self.data = data
+        self.type = type
 
         for key, value in kwargs:
             setattr(self, key, value)

@@ -16,11 +16,12 @@ if option is not None:
     df = pd.read_csv(option)
     st.write(df.head())
     # options = st.multiselect(df.columns)
+    st.write(option.name.removesuffix('.csv'))
     if st.button("Save Dataset"):
-        automl.registry.register(
-            Dataset.from_dataframe(data=df,
-                                   name=option.name.removesuffix('.csv'),
-                                   asset_path=option.name))
+        df_dataset = Dataset.from_dataframe(
+            data=df, name=option.name.removesuffix('.csv'), asset_path=option.name)
+        st.write(df_dataset.__str__())
+        automl.registry.register(df_dataset)
         st.write("Dataset saved.")
 else:
     st.write('Please select something')
