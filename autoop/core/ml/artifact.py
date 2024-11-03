@@ -8,6 +8,11 @@ class Artifact(BaseModel):
     id: str = Field(default_factory=str)
     data: bytes = Field(default_factory=bytes)
     name: str = Field(default_factory=str)
+    version: str = Field(default_factory=str)
+    asset_path: str = Field(default_factory=str)
+    tags: list = Field(default_factory=list)
+    metadata: dict = Field(default_factory=dict)
+    type: str = Field(default_factory=str)
 
     def __init__(self, name: str,
                  version: str = "N/A",
