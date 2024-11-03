@@ -17,5 +17,12 @@ automl = AutoMLSystem.get_instance()
 
 datasets = automl.registry.list(type="dataset")
 
-# your code here
+# features_selection = st.column_config.SelectboxColumn(label=None, width=None, help=None, disabled=None, required=None, default=None, options=None)
+
+ 
+
+# if features_selection is not None:
+#     dataset = automl.registry.get(features_selection)
+#     st.write(dataset.read())
+
 

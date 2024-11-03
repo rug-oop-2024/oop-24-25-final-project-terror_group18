@@ -83,7 +83,7 @@ class LocalStorage(Storage):
         return [os.path.relpath(p, self._base_path) for p in keys if os.path.isfile(p)]
 
     def _assert_path_exists(self, path: str):
-        if not os.path.exists(path)
+        if not os.path.exists(path):
             raise NotFoundError(path)
 
     def _join_path(self, path: str) -> str:
