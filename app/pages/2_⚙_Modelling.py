@@ -18,17 +18,18 @@ automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 # print(datasets)
 
-data = pd.read_csv(r"C:\Users\Iva\Downloads\wine+quality\winequality-red.csv")
-st.write(data.columns)
+data = pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
+st.write(data.head())
 # features_selection = st.column_config.SelectboxColumn(label=None, width=None, help=None, disabled=None, required=None, default=None, options=None)
 
 # data = pd.read_csv(datasets)
 
 
-for column in data.columns:
-    st.selectbox(
-        f"Select an option for {column}", 
-        (column)
+selected_column = st.selectbox(
+        f"Select your predictions/ground truth...", 
+        options=data.columns,
+        placeholder="Select 1 column...",
+        index=None,
     )
 
 # # Display the selected column's data
