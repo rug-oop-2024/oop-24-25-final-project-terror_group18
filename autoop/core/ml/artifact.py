@@ -1,3 +1,4 @@
+import pandas as pd
 from pydantic import BaseModel, Field
 import base64
 
@@ -5,6 +6,7 @@ import base64
 class Artifact(BaseModel):
     asset: dict = Field(default_factory=dict)
     id: str = Field(default_factory=str)
+    data: bytes = Field(default_factory=bytes)
 
     def __init__(self, name: str,
                  version: str = "N/A",
@@ -19,6 +21,7 @@ class Artifact(BaseModel):
         ).decode('utf-8')
 
         self.id = f"{encoded_id}:{version}"
+        self.data = data
 
         self.asset["artifact_id"] = self.id
         self.asset["name"] = name
@@ -28,8 +31,6 @@ class Artifact(BaseModel):
         self.asset["metadata"] = metadata
         self.asset["data"] = data
         self.asset["type"] = type
-
-
 
         for key, value in kwargs:
             setattr(self, key, value)
