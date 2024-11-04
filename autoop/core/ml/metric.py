@@ -77,9 +77,13 @@ class ConfusionMatrix(Metric):
         self._type = "classification"
         self._matrix = None
 
+    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> :
+        if self._matrix is None:
+            self.evaluate(y_true, y_pred)
 
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true positives (y = y_pred)
+        self._check_matrix(y_true, y_pred)
         true_positives = []
         for i in range(self._matrix):
             true_positives.append(self._matrix[i][i])
@@ -88,17 +92,25 @@ class ConfusionMatrix(Metric):
     def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
         # return np.sum((y_true == 1) & (y_pred == 0))
-        true_positives = []
+        self._check_matrix(y_true, y_pred)
+        false_negatives = []
         for i in range(self._matrix):
-            true_positives.append(np.sum(self._matrix[i]) - self._matrix[i][i])
-        return np.mean(true_positives)
+            for j in range(self._matrix[i])
+                false_negatives.append(self._matrix[i][j])
+        return np.mean(false_negatives)
 
     def find_FP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false positives (y = 0, y_pred = 1) Type-I error
-        return np.sum((y_true == 0) & (y_pred == 1))
+        self._check_matrix(y_true, y_pred)
+        false_positives = []
+        for i in range(self._matrix):
+            false_positives.append(np.sum(self._matrix[i]) - self._matrix[i][i])
+        return np.mean(false_positives)
 
     def find_TN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true negatives (y = 0, y_pred = 0)
+        # return np.sum((y_true == 0) & (y_pred == 1))
+        self._check_matrix(y_true, y_pred)
         return np.sum((y_true == 0) & (y_pred == 0))
 
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
