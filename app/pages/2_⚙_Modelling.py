@@ -138,7 +138,13 @@ if selection_ground_truth is not None:
             st.markdown(
                 ''':red[*You have not selected a model or metrics yet!*]''')
 
-model = get_model(model_choice)
+        model = get_model(model_choice)
+        # for metric in metric_choice:
+        #     metric = get_metric(metric)
+
+        #     pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
+
+
 
 # !!!! we might have multiple metrics in list
 #metric = get_metric(metric_choice)
