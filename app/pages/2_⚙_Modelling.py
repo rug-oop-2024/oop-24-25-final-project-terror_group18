@@ -11,7 +11,8 @@ def write_helper_text(text: str):
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
 st.write("# ⚙ Modelling")
-write_helper_text("In this section, you can design a machine learning pipeline to train a model on a dataset.")
+write_helper_text("In this section, you can design a machine learning pipeline "
+                  "to train a model on a dataset.")
 
 automl = AutoMLSystem.get_instance()
 
@@ -65,3 +66,6 @@ else:
         # or should we rise errors
 st.write(f"You have decided to use ***{train_test_split}%*** of your "
          f"data for training and ***{100 - train_test_split}%*** for testing.")
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=(100 - train_test_split)/100)
