@@ -110,3 +110,6 @@ if selection_ground_truth is not None:
 
 #model = get_model(model_choice)
 #pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
+
+# X_train, X_test, y_train, y_test = train_test_split(
+#     X, y, test_size=(100 - train_test_split)/100)
