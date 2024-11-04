@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 from overrides import override
 
+from autoop.core.ml.ml_type import MLType
+
 METRICS = [
     "mean_squared_error",
     "root_mean_squared_error"
@@ -27,11 +29,10 @@ def get_metric(name: str):
     return None
 
 
-class Metric(ABC):
+class Metric(ABC, MLType):
     """
     Base class for all metrics.
     """
-    # your code here
     # remember: metrics take ground truth and prediction as input and return a real number
     _metrics = []
 
@@ -40,7 +41,7 @@ class Metric(ABC):
         self._metrics.append(self)
 
     def __call__(self, y_true, y_pred):
-        return self._implementation(y_true, y_pred)
+        return self.evaluate(y_true, y_pred)
 
     @property
     def name(self):
@@ -51,7 +52,7 @@ class Metric(ABC):
         return deepcopy(self.metrics)
 
     @abstractmethod
-    def _implementation(self, y_true, y_pred):
+    def evaluate(self, y_true, y_pred):
         pass
 
 
@@ -61,19 +62,21 @@ class MeanSquaredError(Metric):
 
     def __init__(self, name: str):
         super().__init__(name)
+        self._type = "regression"
 
     @override
-    def _implementation(self, y_true: Any, y_pred: Any) -> float:
+    def evaluate(self, y_true: Any, y_pred: Any) -> float:
         mse = (y_true - y_pred) ** 2
         return mse.mean()
 
 
-class ConfusionMatrix(Metric):  # binary classification metric
+class ConfusionMatrix(Metric):
     def __init__(self, name: str):
         super().__init__(name)
-# make it ONE HOT ENCODINGGG
+        self._type = "classification"
+
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
-        # counts the number of true positives (y = 1, y_pred = 1)
+        # counts the number of true positives (y = y_pred)
         return np.sum((y_true == 1) & (y_pred == 1))
 
     def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
@@ -88,7 +91,7 @@ class ConfusionMatrix(Metric):  # binary classification metric
         # counts the number of true negatives (y = 0, y_pred = 0)
         return np.sum((y_true == 0) & (y_pred == 0))
 
-    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> list:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> list:
         return [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
                 [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
 
@@ -98,22 +101,22 @@ class Accuracy(ConfusionMatrix):
     def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
         TN = super().find_TN(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
 
-        return TP + TN / TP + TN + FP + FN
+        return (TP + TN) / (TP + TN + FP + FN)
 
-class Precision(Metric, ConfusionMatrix):
+class Precision(ConfusionMatrix):
     """
     Focuses on type I error of False Positives.
     """
     def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
         return TP/(TP+FP)
@@ -126,7 +129,7 @@ class Recall(ConfusionMatrix):
     def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
         return TP/(TP+FN)
@@ -136,7 +139,7 @@ class RootMeanSquaredError(MeanSquaredError):
     def __init__(self, name: str):
         super().__init__(name)
 
-    def _implementation(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sqrt(super())
 
 

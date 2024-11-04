@@ -8,13 +8,15 @@ import numpy as np
 from copy import deepcopy
 from typing import Literal
 
+from autoop.core.ml.ml_type import MLType
 
-class Model(ABC):   # Artifact?
+
+class Model(ABC, MLType):
 
     _models = []
     name: str = "model"
-    _type: Literal["classification", "regression"] = (
-        Field(default_factory=Literal["classification", "regression"]))
+    '''_type: Literal["classification", "regression"] = (
+        Field(default_factory=Literal["classification", "regression"]))'''
 
     def __init__(self):
         self._models.append(self)
