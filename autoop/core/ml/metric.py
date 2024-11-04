@@ -85,7 +85,7 @@ class ConfusionMatrix(Metric):
         self._matrix = None
         self.name = "Confusion Matrix"
 
-    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> :
+    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None :
         if self._matrix is None:
             self.evaluate(y_true, y_pred)
 
@@ -103,8 +103,10 @@ class ConfusionMatrix(Metric):
         self._check_matrix(y_true, y_pred)
         false_negatives = []
         for i in range(self._matrix):
-            for j in range(self._matrix[i])
-                false_negatives.append(self._matrix[i][j])
+            sum = 0
+            for j in range(self._matrix[i]):
+                sum += self._matrix[i][j]
+            false_negatives.append(sum - self._matrix[i][i])
         return np.mean(false_negatives)
 
     def find_FP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
@@ -118,8 +120,9 @@ class ConfusionMatrix(Metric):
     def find_TN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true negatives (y = 0, y_pred = 0)
         # return np.sum((y_true == 0) & (y_pred == 1))
-        self._check_matrix(y_true, y_pred)
-        return np.sum((y_true == 0) & (y_pred == 0))
+        return len(y_true)**2 - (self.find_FN(y_true, y_pred) +
+                                 self.find_FP(y_true, y_pred) +
+                                 self.find_TP(y_true, y_pred))
 
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
         keys = list(dict.fromkeys(y_pred))
