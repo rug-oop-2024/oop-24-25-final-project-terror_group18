@@ -6,7 +6,8 @@ from autoop.core.ml.dataset import Dataset
 from autoop.functional.feature import detect_feature_types
 from autoop.core.ml.model import REGRESSION_MODELS, CLASSIFICATION_MODELS
 from autoop.core.ml.model import get_model
-from autoop.core.ml.metric import METRICS, get_metric
+from autoop.core.ml.metric import METRICS_CLASSIFICATION, METRICS_REGRESSION
+from autoop.core.ml.metric import get_metric
 
 
 
@@ -98,6 +99,7 @@ st.write(f"You have decided to use ***{train_test_split}%*** of your "
 st.divider()
 if selection_ground_truth is not None:
     model_choice = None
+    metric_choice = None
     for i, feature in enumerate(detect_feature_types(Y_data)):
         if feature.type == "categorical":
             model_choice = st.selectbox(
@@ -110,12 +112,12 @@ if selection_ground_truth is not None:
 
             metric_choice = st.multiselect(
                 "Select your metrics:",
-                options=METRICS,
+                options=METRICS_CLASSIFICATION,
                 default=None,          # No default selection
                 placeholder="Select one or more metrics...",
                 key=f"multiselect_metrics_{i}"
             )
-                
+
         elif feature.type == "numerical":
             model_choice = st.selectbox(
                 "Select your regression model:",
@@ -124,10 +126,22 @@ if selection_ground_truth is not None:
                 index=None,
                 key=f"regression_model_selectbox_{i}"
             )
+
+            metric_choice = st.multiselect(
+                "Select your metrics:",
+                options=METRICS_REGRESSION,
+                default=None,          # No default selection
+                placeholder="Select one or more metrics...",
+                key=f"multiselect_metrics_{i}"
+            )
         else:
-            st.write("You have not selected a model yet!")
+            st.markdown(
+                ''':red[*You have not selected a model or metrics yet!*]''')
 
 model = get_model(model_choice)
+
+# !!!! we might have multiple metrics in list
+#metric = get_metric(metric_choice)
 
 
 #pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
