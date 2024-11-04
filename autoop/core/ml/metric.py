@@ -34,7 +34,7 @@ class Metric(ABC, MLType):
     Base class for all metrics.
     """
     # remember: metrics take ground truth and prediction as input and return a real number
-    _metrics = []
+    _metrics: list = []
 
     def __init__(self, name: str):
         self._name = name

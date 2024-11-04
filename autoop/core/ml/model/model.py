@@ -14,7 +14,7 @@ from autoop.core.ml.ml_type import MLType
 class Model(ABC, MLType):
 
     _models = []
-    name: str = "model"
+    _name: str = "model"
     '''_type: Literal["classification", "regression"] = (
         Field(default_factory=Literal["classification", "regression"]))'''
 
@@ -27,6 +27,14 @@ class Model(ABC, MLType):
     @property
     def models(self):
         return self._models
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, name: str) -> None:
+        self._name = name
 
     @abstractmethod
     def fit(self, train_X: np.ndarray, train_y: np.ndarray) -> None:
