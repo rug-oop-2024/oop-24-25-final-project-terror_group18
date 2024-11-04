@@ -85,7 +85,7 @@ class ConfusionMatrix(Metric):
         self._matrix = None
         self.name = "Confusion Matrix"
 
-    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> :
+    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None :
         if self._matrix is None:
             self.evaluate(y_true, y_pred)
 
