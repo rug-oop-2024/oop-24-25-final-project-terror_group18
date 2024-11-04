@@ -10,7 +10,7 @@ class MLType:
     @property
     def type(self) -> Literal["classification", "regression"]:
         return self._type
-    
+
     @type.setter
     def type(self, value: Literal["classification", "regression"]) -> None:
         self._type = value

@@ -8,12 +8,12 @@ from overrides import override
 from autoop.core.ml.ml_type import MLType
 
 METRICS = [
-    "mean_squared_error",
-    "root_mean_squared_error"
-    "accuracy",
-    "precision",
-    "recall",
-    "confusion_matrix"
+    "Mean Squared Error",
+    "Root Mean Squared Error"
+    "Accuracy",
+    "Precision",
+    "Recall",
+    "Confusion Matrix"
 
 ]  # add the names (in strings) of the metrics you implement
 
@@ -35,17 +35,21 @@ class Metric(ABC, MLType):
     """
     # remember: metrics take ground truth and prediction as input and return a real number
     _metrics: list = []
+    _name: str
 
-    def __init__(self, name: str):
-        self._name = name
+    def __init__(self) -> None:
         self._metrics.append(self)
 
-    def __call__(self, y_true, y_pred):
+    def __call__(self, y_true, y_pred) :
         return self.evaluate(y_true, y_pred)
 
     @property
-    def name(self):
-        return deepcopy(self._name)
+    def name(self) -> str:
+        return self._name
+    
+    @name.setter
+    def name(self, name: str) -> None:
+        self._name = name
 
     @property
     def metrics(self):
@@ -60,9 +64,10 @@ class Metric(ABC, MLType):
 
 class MeanSquaredError(Metric):
 
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self):
+        super().__init__()
         self._type = "regression"
+        self.name = "Mean Squared Error"
 
     @override
     def evaluate(self, y_true: Any, y_pred: Any) -> float:
@@ -72,10 +77,11 @@ class MeanSquaredError(Metric):
 
 class ConfusionMatrix(Metric):
 
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self):
+        super().__init__()
         self._type = "classification"
         self._matrix = None
+        self.name = "Confusion Matrix"
 
 
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
@@ -112,9 +118,10 @@ class ConfusionMatrix(Metric):
 
 class Accuracy(Metric):
 
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self):
+        super().__init__()
         self._type = 'classification'
+        self.name = "Accuracy"
 
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return (np.sum(y_true == y_pred)/len(y_true))/100
@@ -123,8 +130,9 @@ class Precision(ConfusionMatrix):
     """
     Focuses on type I error of False Positives.
     """
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self):
+        super().__init__()
+        self.name = "Precision"
 
     @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
@@ -137,8 +145,9 @@ class Recall(ConfusionMatrix):
     """
     Focuses on type II error of False Negatives.
     """
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self):
+        super().__init__()
+        self.name = "Recall"
 
     @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
@@ -148,17 +157,18 @@ class Recall(ConfusionMatrix):
 
 
 class RootMeanSquaredError(MeanSquaredError):
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self):
+        super().__init__()
+        self.name = "Root Mean Squared Error"
 
     @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sqrt(super())
 
 
-MeanSquaredError("mean_squared_error")
-Accuracy("accuracy")
-ConfusionMatrix("confusion_matrix")
-Precision("precision")
-Recall("recall")
-RootMeanSquaredError("root_mean_squared_error")
+MeanSquaredError()
+Accuracy()
+ConfusionMatrix()
+Precision()
+Recall()
+RootMeanSquaredError()
