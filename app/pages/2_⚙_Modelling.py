@@ -16,7 +16,6 @@ write_helper_text("In this section, you can design a machine learning pipeline t
 automl = AutoMLSystem.get_instance()
 
 datasets = automl.registry.list(type="dataset")
-# print(datasets)
 
 data = pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
 st.write(data.head())
@@ -25,18 +24,44 @@ st.write(data.head())
 # data = pd.read_csv(datasets)
 
 
-selected_column = st.selectbox(
-        f"Select your predictions/ground truth...", 
+selection_ground_truth = st.selectbox(
+        "Select the column with the data you want to predict:",
         options=data.columns,
-        placeholder="Select 1 column...",
+        placeholder="Select your ground truth...",
         index=None,
     )
 
-# # Display the selected column's data
-# st.write(f"You selected {selected_column}")
-# st.write(datasets[selected_column])
-# # if features_selection is not None:
-# #     dataset = automl.registry.get(features_selection)
-# #     st.write(dataset.read())
+selection_observations = st.multiselect(
+    "Select your observations columns:",
+    options=data.columns,
+    default=None,          # No default selection
+    placeholder="Select one or more columns..."
+)
 
+train_test_split = st.slider("Select your train/test split", 0, 100)
 
+st.divider()
+
+st.markdown("*Before you continue, these are your selections so far:*")
+# Y DATA
+if selection_ground_truth is None:
+    st.markdown('''
+    :red[**Please select something as your ground truth!**]''')
+else:
+    st.markdown(f"You have selected the ***{selection_ground_truth}*** "
+                "column as your ground truth.")
+
+# X DATA
+        # raise error when diff types of cat/cont mix data columns are selected??
+if len(selection_observations) == 0:
+    st.markdown('''
+    :red[**Please select at least one column as your observations!**]''')
+else:
+    st.write(f"You have selected the ***{selection_observations}*** "
+             "column as your observations.")
+
+# TRAIN/TEST SPLIT
+        # if train_test_split == 0 or 100: can we use this? 
+        # or should we rise errors
+st.write(f"You have decided to use ***{train_test_split}%*** of your "
+         f"data for training and ***{100 - train_test_split}%*** for testing.")
