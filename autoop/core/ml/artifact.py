@@ -4,7 +4,7 @@ import base64
 
 
 class Artifact(BaseModel):
-    #asset: dict = Field(default_factory=dict)
+    asset: dict = Field(default_factory=dict)
     id: str = Field(default_factory=str)
     data: bytes = Field(default_factory=bytes)
     name: str = Field(default_factory=str)
@@ -35,6 +35,7 @@ class Artifact(BaseModel):
         self.metadata = metadata
         self.data = data
         self.type = type
+        self.asset["data"] = data
 
         for key, value in kwargs:
             setattr(self, key, value)

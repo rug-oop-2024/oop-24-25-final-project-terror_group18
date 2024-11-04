@@ -4,8 +4,8 @@ from autoop.core.ml.model.regression import MultipleLinearRegression
 
 REGRESSION_MODELS = [
     "Lasso Regression",
-    "multiple_linear_regression",
-    "ridge_regression"
+    "Multiple Linear Regression",
+    "Ridge Regression"
 ]
 
 CLASSIFICATION_MODELS = [
