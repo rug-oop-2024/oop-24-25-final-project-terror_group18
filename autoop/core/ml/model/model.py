@@ -4,6 +4,7 @@ from abc import abstractmethod, ABC
 from pydantic import Field
 
 from autoop.core.ml.artifact import Artifact
+from typing import Any
 import numpy as np
 from copy import deepcopy
 from typing import Literal, List
@@ -23,6 +24,9 @@ class Model(ABC, MLType):
 
     def __str__(self):
         return f"Model(type={self._type})"
+    
+    def __iter__(self):
+        return iter(self._models)
 
     @property
     def models(self) -> List:
@@ -38,11 +42,11 @@ class Model(ABC, MLType):
 
     @abstractmethod
     def fit(self, train_X: np.ndarray, train_y: np.ndarray) -> None:
-        return
+        return None
 
     @abstractmethod
-    def predict(self, test_X: np.ndarray) -> np.ndarray:
-        return
+    def predict(self, test_X: np.ndarray) -> Any:
+        return None
 
     def to_artifact(self, name: str) -> Artifact:
         return Artifact(name=name, model=deepcopy(self))

@@ -14,9 +14,10 @@ CLASSIFICATION_MODELS = [
 ]
 
 
+models_list = Model.__iter__
 def get_model(model_name: str) -> Model | None:
     """Factory function to get a model by name."""
-    for model in Model().models:
+    for model in models_list:
         if model.name == model_name:
             return model
     return None
