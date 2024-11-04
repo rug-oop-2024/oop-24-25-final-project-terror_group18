@@ -7,15 +7,17 @@ from overrides import override
 
 from autoop.core.ml.ml_type import MLType
 
-METRICS = [
-    "Mean Squared Error",
-    "Root Mean Squared Error"
+METRICS_CLASSIFICATION = [
     "Accuracy",
     "Precision",
     "Recall",
     "Confusion Matrix"
+]  
 
-]  # add the names (in strings) of the metrics you implement
+METRICS_REGRESSION = [
+    "Mean Squared Error",
+    "Root Mean Squared Error"
+]
 
 
 # https://neptune.ai/blog/performance-metrics-in-machine-learning-complete-guide
@@ -46,7 +48,7 @@ class Metric(ABC, MLType):
     @property
     def name(self) -> str:
         return self._name
-    
+
     @name.setter
     def name(self, name: str) -> None:
         self._name = name
@@ -66,7 +68,7 @@ class MeanSquaredError(Metric):
 
     def __init__(self):
         super().__init__()
-        self._type = "regression"
+        self.type = "regression"
         self.name = "Mean Squared Error"
 
     @override
@@ -79,7 +81,7 @@ class ConfusionMatrix(Metric):
 
     def __init__(self):
         super().__init__()
-        self._type = "classification"
+        self.type = "classification"
         self._matrix = None
         self.name = "Confusion Matrix"
 
@@ -135,7 +137,7 @@ class Accuracy(Metric):
 
     def __init__(self):
         super().__init__()
-        self._type = 'classification'
+        self.type = 'classification'
         self.name = "Accuracy"
 
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:

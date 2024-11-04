@@ -22,7 +22,7 @@ class Model(ABC, MLType):
         self._models.append(self)
 
     def __str__(self):
-        return f"Model(type={self._type})"
+        return f"Model(type={self.type})"
 
     @property
     def models(self):
