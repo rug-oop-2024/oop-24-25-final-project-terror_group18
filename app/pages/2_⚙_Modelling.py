@@ -4,7 +4,10 @@ import pandas as pd
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
 from autoop.functional.feature import detect_feature_types
-from autoop.core.ml.model import REGRESSION_MODELS, CLASSIFICATION_MODELS, get_model
+from autoop.core.ml.model import REGRESSION_MODELS, CLASSIFICATION_MODELS
+from autoop.core.ml.model import get_model
+from autoop.core.ml.metric import METRICS, get_metric
+
 
 
 
@@ -104,6 +107,15 @@ if selection_ground_truth is not None:
                 index=None,
                 key=f"classification_model_selectbox_{i}"
             )
+
+            metric_choice = st.multiselect(
+                "Select your metrics:",
+                options=METRICS,
+                default=None,          # No default selection
+                placeholder="Select one or more metrics...",
+                key=f"multiselect_metrics_{i}"
+            )
+                
         elif feature.type == "numerical":
             model_choice = st.selectbox(
                 "Select your regression model:",
