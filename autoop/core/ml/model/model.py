@@ -38,11 +38,11 @@ class Model(ABC, MLType):
 
     @abstractmethod
     def fit(self, train_X: np.ndarray, train_y: np.ndarray) -> None:
-        pass
+        return
 
     @abstractmethod
     def predict(self, test_X: np.ndarray) -> np.ndarray:
-        pass
+        return
 
     def to_artifact(self, name: str) -> Artifact:
         return Artifact(name=name, model=deepcopy(self))
