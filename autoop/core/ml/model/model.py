@@ -6,7 +6,7 @@ from pydantic import Field
 from autoop.core.ml.artifact import Artifact
 import numpy as np
 from copy import deepcopy
-from typing import Literal
+from typing import Literal, List
 
 from autoop.core.ml.ml_type import MLType
 
@@ -25,8 +25,8 @@ class Model(ABC, MLType):
         return f"Model(type={self._type})"
 
     @property
-    def models(self):
-        return self._models
+    def models(self) -> List:
+        return deepcopy(self._models)
     
     @property
     def name(self):

@@ -1,4 +1,3 @@
-
 from autoop.core.ml.model.model import Model
 from autoop.core.ml.model.regression import MultipleLinearRegression
 
@@ -14,9 +13,10 @@ CLASSIFICATION_MODELS = [
     "Support Vector Classifier"
 ]
 
-def get_model(model_name: str) -> Model:
+
+def get_model(model_name: str) -> Model | None:
     """Factory function to get a model by name."""
-    for model in Model.models:
+    for model in Model().models:
         if model.name == model_name:
             return model
     return None
