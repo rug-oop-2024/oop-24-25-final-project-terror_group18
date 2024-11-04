@@ -42,7 +42,7 @@ class Metric(ABC, MLType):
     def __init__(self) -> None:
         self._metrics.append(self)
 
-    def __call__(self, y_true, y_pred) :
+    def __call__(self, y_true, y_pred) -> Any:
         return self.evaluate(y_true, y_pred)
 
     @property
@@ -54,11 +54,11 @@ class Metric(ABC, MLType):
         self._name = name
 
     @property
-    def metrics(self):
+    def metrics(self) -> list:
         return deepcopy(self.metrics)
 
     @abstractmethod
-    def evaluate(self, y_true, y_pred):
+    def evaluate(self, y_true, y_pred) -> Any:
         pass
 
 
@@ -71,7 +71,7 @@ class MeanSquaredError(Metric):
         self.type = "regression"
         self.name = "Mean Squared Error"
 
-    @override
+    # @override
     def evaluate(self, y_true: Any, y_pred: Any) -> float:
         mse = (y_true - y_pred) ** 2
         return mse.mean()
@@ -85,7 +85,7 @@ class ConfusionMatrix(Metric):
         self._matrix = None
         self.name = "Confusion Matrix"
 
-    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None :
+    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
         if self._matrix is None:
             self.evaluate(y_true, y_pred)
 
@@ -124,6 +124,7 @@ class ConfusionMatrix(Metric):
                                  self.find_FP(y_true, y_pred) +
                                  self.find_TP(y_true, y_pred))
 
+    # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
         keys = list(dict.fromkeys(y_pred))
         n = len(keys)
@@ -151,7 +152,7 @@ class Precision(ConfusionMatrix):
         super().__init__()
         self.name = "Precision"
 
-    @override
+    # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
@@ -166,7 +167,7 @@ class Recall(ConfusionMatrix):
         super().__init__()
         self.name = "Recall"
 
-    @override
+    # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
@@ -178,7 +179,7 @@ class RootMeanSquaredError(MeanSquaredError):
         super().__init__()
         self.name = "Root Mean Squared Error"
 
-    @override
+    # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sqrt(super())
 
