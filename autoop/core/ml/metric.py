@@ -17,7 +17,7 @@ METRICS_CLASSIFICATION = [
 METRICS_REGRESSION = [
     "Mean Squared Error",
     "Root Mean Squared Error"
-]  
+]
 
 
 # https://neptune.ai/blog/performance-metrics-in-machine-learning-complete-guide
