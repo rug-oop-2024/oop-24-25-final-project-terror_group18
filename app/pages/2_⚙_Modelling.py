@@ -101,7 +101,7 @@ if selection_ground_truth is not None:
     model_choice = None
     metric_choice = None
     for i, feature in enumerate(detect_feature_types(Y_data)):
-        if feature._type == "categorical":
+        if feature.type == "categorical":
             model_choice = st.selectbox(
                 "Select your classification model:",
                 options=CLASSIFICATION_MODELS,
@@ -118,7 +118,7 @@ if selection_ground_truth is not None:
                 key=f"multiselect_metrics_{i}"
             )
 
-        elif feature._type == "numerical":
+        elif feature.type == "numerical":
             model_choice = st.selectbox(
                 "Select your regression model:",
                 options=REGRESSION_MODELS,
