@@ -71,17 +71,27 @@ class MeanSquaredError(Metric):
 
 
 class ConfusionMatrix(Metric):
+
     def __init__(self, name: str):
         super().__init__(name)
         self._type = "classification"
+        self._matrix = None
+
 
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true positives (y = y_pred)
-        return np.sum((y_true == 1) & (y_pred == 1))
+        true_positives = []
+        for i in range(self._matrix):
+            true_positives.append(self._matrix[i][i])
+        return np.mean(true_positives)
 
     def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
-        return np.sum((y_true == 1) & (y_pred == 0))
+        # return np.sum((y_true == 1) & (y_pred == 0))
+        true_positives = []
+        for i in range(self._matrix):
+            true_positives.append(np.sum(self._matrix[i]) - self._matrix[i][i])
+        return np.mean(true_positives)
 
     def find_FP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false positives (y = 0, y_pred = 1) Type-I error
@@ -91,23 +101,23 @@ class ConfusionMatrix(Metric):
         # counts the number of true negatives (y = 0, y_pred = 0)
         return np.sum((y_true == 0) & (y_pred == 0))
 
-    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> list:
-        return [[self.find_TP(y_true, y_pred), self.find_FP(y_true, y_pred)],
-                [self.find_TN(y_true, y_pred), self.find_FN(y_true, y_pred)]]
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+        keys = list(dict.fromkeys(y_pred))
+        n = len(keys)
+        matrix = np.zeros((n, n))
+        for pdata, tdata in y_pred, y_true:
+            matrix[keys.index(pdata)][keys.index(tdata)] += 1
+        return matrix
 
 
-class Accuracy(ConfusionMatrix):
+class Accuracy(Metric):
 
     def __init__(self, name: str):
         super().__init__(name)
+        self._type = 'classification'
 
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        TP = super().find_TP(y_true, y_pred)
-        FP = super().find_FP(y_true, y_pred)
-        TN = super().find_TN(y_true, y_pred)
-        FN = super().find_FN(y_true, y_pred)
-
-        return (TP + TN) / (TP + TN + FP + FN)
+        return (np.sum(y_true == y_pred)/len(y_true))/100
 
 class Precision(ConfusionMatrix):
     """
@@ -116,6 +126,7 @@ class Precision(ConfusionMatrix):
     def __init__(self, name: str):
         super().__init__(name)
 
+    @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
@@ -129,6 +140,7 @@ class Recall(ConfusionMatrix):
     def __init__(self, name: str):
         super().__init__(name)
 
+    @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
@@ -139,6 +151,7 @@ class RootMeanSquaredError(MeanSquaredError):
     def __init__(self, name: str):
         super().__init__(name)
 
+    @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sqrt(super())
 
