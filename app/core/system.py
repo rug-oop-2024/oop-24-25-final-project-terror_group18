@@ -25,6 +25,7 @@ class ArtifactRegistry():
             "metadata": artifact.metadata,
             "type": artifact.type,
         }
+        #raise ValueError(f"db is {self._database}")
         self._database.set(f"artifacts", artifact.id, entry)
 
     def list(self, type: str = None) -> List[Artifact]:

@@ -33,7 +33,6 @@ class Artifact(BaseModel):
         self.asset_path = asset_path
         self.tags = tags
         self.metadata = metadata
-        self.data = data
         self.type = type
 
         for key, value in kwargs:
@@ -43,14 +42,15 @@ class Artifact(BaseModel):
         """
         Read artifact data
         """
-        return self.asset["data"]
+        return self.data
 
     def save(self, data: bytes):
         """
         Args:
-            data:
+            data: bytes data to save
 
-        Returns:
+        Returns: None
 
         """
-        self.asset["data"] = base64.b64encode(data)
+        #self.data = base64.b64encode(data)
+
