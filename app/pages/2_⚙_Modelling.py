@@ -29,29 +29,38 @@ st.write(dataframe.head())
 
 # data = pd.read_csv(datasets)
 
+dataframe_columns = dataframe.columns
 
 selection_ground_truth = st.selectbox(
         "Select the column with the data you want to predict:",
         options=dataframe.columns,
         placeholder="Select your ground truth...",
         index=None,
+        key="select_ground_truth",
     )
-
 
 selection_observations = st.multiselect(
     "Select your observations columns:",
     options=dataframe.columns,
     default=None,          # No default selection
-    placeholder="Select one or more columns..."
+    placeholder="Select one or more columns...",
+    key="multiselect_observations"
 )
+
+# ERROR: when we select the same column for both ground truth and observations
+for observation in selection_observations:
+    if observation == selection_ground_truth:
+        st.markdown("You have selected the same column "
+                    f"***{selection_ground_truth}*** "
+                    "for both ground truth and observations.")
+        st.markdown('''
+        :red[**Please select another column for your observations!**]''')
+        selection_observations.remove(observation)
 
 
 train_test_split = st.slider("Select your train/test split", 0, 100)
 
-    
-
 st.divider()
-
 st.markdown("*Before you continue, these are your selections so far:*")
 # Y DATA
 if selection_ground_truth is None:
@@ -66,7 +75,6 @@ else:
     st.write(dataframe[selection_ground_truth].head())
 
 # X DATA
-        # raise error when diff types of cat/cont mix data columns are selected??
 if len(selection_observations) == 0:
     st.markdown('''
     :red[**Please select at least one column as your observations!**]''')
@@ -80,35 +88,36 @@ else:
 
 # TRAIN/TEST SPLIT
         # if train_test_split == 0 or 100: can we use this? 
-        # or should we rise errors
+        # or should we raise errors
 st.write(f"You have decided to use ***{train_test_split}%*** of your "
          f"data for training and ***{100 - train_test_split}%*** for testing.")
-
 
 st.divider()
 if selection_ground_truth is not None:
     model_choice = None
-    while model_choice is None:
-        for feature in detect_feature_types(Y_data):
-            if feature.type == "categorical":
-                model_choice = st.selectbox(
-                    "Select your classification model:",
-                    options=CLASSIFICATION_MODELS,
-                    placeholder="Select your model...",
-                    index=None
-                )
-            elif feature.type == "numerical":
-                model_choice = st.selectbox(
-                    "Select your regression model:",
-                    options=REGRESSION_MODELS,
-                    placeholder="Select your model...",
-                    index=None
-                )
-            else:
-                st.write("You have not selected a model yet!")
+    for i, feature in enumerate(detect_feature_types(Y_data)):
+        if feature.type == "categorical":
+            model_choice = st.selectbox(
+                "Select your classification model:",
+                options=CLASSIFICATION_MODELS,
+                placeholder="Select your model...",
+                index=None,
+                key=f"classification_model_selectbox_{i}"
+            )
+        elif feature.type == "numerical":
+            model_choice = st.selectbox(
+                "Select your regression model:",
+                options=REGRESSION_MODELS,
+                placeholder="Select your model...",
+                index=None,
+                key=f"regression_model_selectbox_{i}"
+            )
+        else:
+            st.write("You have not selected a model yet!")
+
+model = get_model(model_choice)
 
 
-#model = get_model(model_choice)
 #pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
 
 # X_train, X_test, y_train, y_test = train_test_split(

@@ -8,5 +8,9 @@ class MLType:
         Field(default_factory=Literal["classification", "regression"]))
 
     @property
-    def type(self):
+    def type(self) -> Literal["classification", "regression"]:
         return self._type
+    
+    @type.setter
+    def type(self, value: Literal["classification", "regression"]) -> None:
+        self._type = value
