@@ -1,6 +1,6 @@
 from sklearn import linear_model as Lasso
 import numpy as np
-from autoop.core.ml.model import Model
+from autoop.core.ml.model.base_model import Model
 
 
 

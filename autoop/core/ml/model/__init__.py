@@ -1,10 +1,10 @@
-from autoop.core.ml.model.model import Model
 from autoop.core.ml.model.regression import MultipleLinearRegression
 from autoop.core.ml.model.regression import LassoRegression
 from autoop.core.ml.model.regression import RidgeRegression
 from autoop.core.ml.model.classification import LogisticRegression
-from autoop.core.ml.model.classification import KNN
+from autoop.core.ml.model.classification import KNearestNeighbors
 from autoop.core.ml.model.classification import SupportVectorClassifier
+from autoop.core.ml.model.base_model import Model
 
 REGRESSION_MODELS = [
     "Lasso Regression",
@@ -19,7 +19,7 @@ CLASSIFICATION_MODELS = [
 ]
 
 
-def get_model(model_name: str) -> Model | None:
+def get_model(model_name: str) -> Model:
     """Factory function to get a model by name."""
     # -models[] remains empty always ->fix
 
@@ -34,7 +34,7 @@ def get_model(model_name: str) -> Model | None:
     elif model_name == "Logistic Regressor":
         return LogisticRegression()
     elif model_name == "KNN":
-        return KNN()
+        return KNearestNeighbors()
     elif model_name == "Support Vector Classifier":
         return SupportVectorClassifier()
     

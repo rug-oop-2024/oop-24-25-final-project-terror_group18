@@ -139,8 +139,9 @@ if selection_ground_truth is not None:
 
         model = get_model(model_choice)
 
+        desired_metrics = []
         for metric in metric_choice:
-            metric = get_metric(metric)
+            desired_metrics.append(get_metric(metric))
 
         if model_choice is not None:
             if metric_choice is not None:
@@ -163,7 +164,7 @@ if predict_button:
     st.button("Predict", on_click=printtt)
 
 
-
+pipeline = automl.pipeline(model, X_data, Y_data, train_test_split, desired_metrics)
 
 #pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
 

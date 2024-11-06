@@ -1,6 +1,6 @@
 from sklearn.linear_model import Ridge
 import numpy as np
-from autoop.core.ml.model import Model
+from autoop.core.ml.model.base_model import Model
 
 
 class RidgeRegression(Ridge, Model):

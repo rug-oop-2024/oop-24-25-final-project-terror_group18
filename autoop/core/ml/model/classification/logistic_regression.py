@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-from autoop.core.ml.model import Model
+from autoop.core.ml.model.base_model import Model
 
 
 class BinaryLogisticRegression(LogisticRegression, Model):

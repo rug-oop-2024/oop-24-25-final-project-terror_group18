@@ -3,7 +3,7 @@ import pickle
 
 from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.dataset import Dataset
-from autoop.core.ml.model import Model
+from autoop.core.ml.model.base_model import Model
 from autoop.core.ml.feature import Feature
 from autoop.core.ml.metric import Metric
 from autoop.functional.preprocessing import preprocess_features
@@ -75,14 +75,18 @@ Pipeline(
         self._artifacts[name] = artifact
 
     def _preprocess_features(self):
-        (target_feature_name, target_data, artifact) = preprocess_features([self._target_feature], self._dataset)[0]
+        (target_feature_name, target_data, artifact) = preprocess_features(
+            [self._target_feature], self._dataset)[0]
         self._register_artifact(target_feature_name, artifact)
-        input_results = preprocess_features(self._input_features, self._dataset)
+        input_results = preprocess_features(self._input_features,
+                                            self._dataset)
         for (feature_name, data, artifact) in input_results:
             self._register_artifact(feature_name, artifact)
-        # Get the input vectors and output vector, sort by feature name for consistency
+        # Get the input vectors and output vector, sort by
+        # feature name for consistency
         self._output_vector = target_data
-        self._input_vectors = [data for (feature_name, data, artifact) in input_results]
+        self._input_vectors = [data for (
+            feature_name, data, artifact) in input_results]
 
     def _split_data(self):
         # Split the data into training and testing sets
