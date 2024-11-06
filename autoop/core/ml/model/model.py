@@ -17,25 +17,8 @@ class Model(ABC, MLType):
     _models = []
     _name: str = "model"
 
-    '''def __init__(self):
-        if self.name not in [m.name for m in self._models]:
-            self._models.append(self)
-        print(self._models)'''
-
     def __str__(self):
         return f"Model(type={self._type})"
-    
-    def __iter__(self):
-        self._index = 0  # Reset index when starting a new iteration
-        return self  # Return the instance as an iterator
-
-    def __next__(self):
-        if self._index < len(self._models):
-            result = self._models[self._index]
-            self._index += 1
-            return result
-        else:
-            raise StopIteration  # End of iteration
 
     @property
     def models(self) -> List:
