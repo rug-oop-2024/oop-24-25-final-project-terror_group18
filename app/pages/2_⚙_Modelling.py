@@ -71,7 +71,6 @@ st.markdown("*Before you continue, these are your selections so far:*")
 if selection_ground_truth is None:
     st.markdown('''
     :red[**Please select something as your ground truth!**]''')
-    predict_button = False
 else:
     st.markdown(f"You have selected the ***{selection_ground_truth}*** "
                 "column as your ground truth.")
@@ -79,13 +78,11 @@ else:
                                     name="Ground Truth Data",
                                     asset_path="Ground Truth.csv")
     st.write(dataframe[selection_ground_truth].head())
-    predict_button = True
 
 # X DATA
 if len(selection_observations) == 0:
     st.markdown('''
     :red[**Please select at least one column as your observations!**]''')
-    predict_button = False
 else:
     st.write(f"You have selected the ***{selection_observations}*** "
              "column as your observations.")
@@ -93,7 +90,6 @@ else:
                                     name="Observations Data",
                                     asset_path="Observations.csv")
     st.write(dataframe[selection_observations].head())
-    predict_button = True
 
 # TRAIN/TEST SPLIT
 st.write(f"You have decided to use ***{train_test_split}%*** of your "
@@ -120,7 +116,6 @@ if selection_ground_truth is not None:
                 placeholder="Select one or more metrics...",
                 key=f"multiselect_metrics_{i}"
             )
-            predict_button = True
 
         elif feature.type == "numerical":
             model_choice = st.selectbox(
@@ -138,16 +133,18 @@ if selection_ground_truth is not None:
                 placeholder="Select one or more metrics...",
                 key=f"multiselect_metrics_{i}"
             )
-            predict_button = True
         else:
             st.markdown(
                 ''':red[*You have not selected a model or metrics yet!*]''')
-            predict_button = False
 
         model = get_model(model_choice)
 
         for metric in metric_choice:
             metric = get_metric(metric)
+
+        if model_choice is not None:
+            if metric_choice is not None:
+                predict_button = True
 
         #     pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
 
@@ -157,6 +154,7 @@ def printtt():
     st.write("Hi")
     st.write("Hi")
 
+
 if predict_button:
     st.divider()
     st.markdown("*Before you continue, these are your selections so far:*")
@@ -165,8 +163,6 @@ if predict_button:
     st.button("Predict", on_click=printtt)
 
 
-# !!!! we might have multiple metrics in list
-#metric = get_metric(metric_choice)
 
 
 #pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
