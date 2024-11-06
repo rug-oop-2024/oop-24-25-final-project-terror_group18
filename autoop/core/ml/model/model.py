@@ -16,20 +16,14 @@ class Model(ABC, MLType):
 
     _models = []
     _name: str = "model"
-    '''_type: Literal["classification", "regression"] = (
-        Field(default_factory=Literal["classification", "regression"]))'''
 
-    def __init__(self):
-        self._models.append(self)
+    '''def __init__(self):
+        if self.name not in [m.name for m in self._models]:
+            self._models.append(self)
+        print(self._models)'''
 
     def __str__(self):
         return f"Model(type={self._type})"
-    
-    # def __iter__(self):
-    #     # return iter(self._models)
-    
-    # def __next__(self):
-        # return next(self._models)
     
     def __iter__(self):
         self._index = 0  # Reset index when starting a new iteration
