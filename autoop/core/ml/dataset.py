@@ -19,9 +19,7 @@ class Dataset(Artifact):
         )
         
     def read(self) -> pd.DataFrame:
-        bytes = super().read()
-        csv = bytes.decode()
-        return pd.read_csv(io.StringIO(csv))
+        return super().read()
 
     def save(self, data: pd.DataFrame) -> bytes:
         bytes = data.to_csv(index=False).encode()

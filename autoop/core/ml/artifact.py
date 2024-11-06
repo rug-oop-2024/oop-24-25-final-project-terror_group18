@@ -1,3 +1,5 @@
+import io
+
 import pandas as pd
 from pydantic import BaseModel, Field
 import base64
@@ -40,11 +42,13 @@ class Artifact(BaseModel):
         for key, value in kwargs:
             setattr(self, key, value)
 
-    def read(self) -> bytes:
+    def read(self) -> pd.DataFrame:
         """
         Read artifact data
         """
-        return self.data
+        bytes = self.data
+        csv = bytes.decode()
+        return pd.read_csv(io.StringIO(csv))
 
     def save(self, data: bytes):
         """
