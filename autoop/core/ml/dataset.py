@@ -10,7 +10,7 @@ class Dataset(Artifact):
 
     @staticmethod
     def from_dataframe(data: pd.DataFrame, name: str, asset_path: str,
-                       version: str = "1.0.0"):
+                       version: str = "1_0_0"):
         return Dataset(
             name=name,
             asset_path=asset_path,

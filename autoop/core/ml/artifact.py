@@ -15,18 +15,19 @@ class Artifact(BaseModel):
     type: str = Field(default_factory=str)
 
     def __init__(self, name: str,
-                 version: str = "N/A",
-                 asset_path: str = "N/A",
+                 version: str = "NA",
+                 asset_path: str = "NA",
                  tags: list = [],
                  metadata: dict = {},
-                 data: bytes = "N/A",
-                 type: str = "N/A", **kwargs):
+                 data: bytes = "NA",
+                 type: str = "NA", **kwargs):
         super().__init__()
         encoded_id = base64.b64encode(
             asset_path.encode('utf-8')
         ).decode('utf-8')
 
-        self.id = f"{encoded_id}:{version}"
+        self.id = f"{encoded_id}_{version}"
+        #raise ValueError(f"id is {self.id}")
         self.data = data
         self.name = name
         self.version = version
@@ -53,5 +54,5 @@ class Artifact(BaseModel):
         Returns: None
 
         """
-        #self.data = base64.b64encode(data)
+        self.data = base64.b64encode(data)
 
