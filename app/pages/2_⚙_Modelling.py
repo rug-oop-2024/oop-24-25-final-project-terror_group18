@@ -139,6 +139,7 @@ if selection_ground_truth is not None:
                 ''':red[*You have not selected a model or metrics yet!*]''')
 
         model = get_model(model_choice)
+        
         # for metric in metric_choice:
         #     metric = get_metric(metric)
 

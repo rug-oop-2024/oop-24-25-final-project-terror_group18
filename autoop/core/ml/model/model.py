@@ -25,17 +25,32 @@ class Model(ABC, MLType):
     def __str__(self):
         return f"Model(type={self._type})"
     
+    # def __iter__(self):
+    #     # return iter(self._models)
+    
+    # def __next__(self):
+        # return next(self._models)
+    
     def __iter__(self):
-        return iter(self._models)
+        self._index = 0  # Reset index when starting a new iteration
+        return self  # Return the instance as an iterator
+
+    def __next__(self):
+        if self._index < len(self._models):
+            result = self._models[self._index]
+            self._index += 1
+            return result
+        else:
+            raise StopIteration  # End of iteration
 
     @property
     def models(self) -> List:
         return deepcopy(self._models)
-    
+
     @property
     def name(self):
         return self._name
-    
+
     @name.setter
     def name(self, name: str) -> None:
         self._name = name

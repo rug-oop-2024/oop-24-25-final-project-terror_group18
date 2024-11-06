@@ -55,7 +55,7 @@ class Metric(ABC, MLType):
 
     @property
     def metrics(self) -> list:
-        return deepcopy(self.metrics)
+        return deepcopy(self._metrics)
 
     @abstractmethod
     def evaluate(self, y_true, y_pred) -> Any:
