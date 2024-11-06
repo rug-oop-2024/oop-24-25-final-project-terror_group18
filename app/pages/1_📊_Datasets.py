@@ -9,13 +9,15 @@ automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 
 # option = st.selectbox(glob("**/*.csv", recursive=True))
-option = st.selectbox("Choose Dataset", ["UPLOAD", datasets])
+options = ["UPLOAD"] + [x.name for x in datasets]
+option = st.selectbox("Choose Dataset", options)
 if option == "UPLOAD":
     option = st.file_uploader("Choose a file", type='csv')
+
+
 if option is not None:
     df = pd.read_csv(option)
     st.write(df.head())
-    # options = st.multiselect(df.columns)
     st.write(option.name.removesuffix('.csv'))
     if st.button("Save Dataset"):
         df_dataset = Dataset.from_dataframe(
