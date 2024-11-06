@@ -22,13 +22,26 @@ METRICS_REGRESSION = [
 
 # https://neptune.ai/blog/performance-metrics-in-machine-learning-complete-guide
 
-def get_metric(name: str):
+def get_metric(metric_name: str):
+    if metric_name == "Mean Squared Error":
+        return MeanSquaredError()
+    elif metric_name == "Root Mean Squared Error":
+        return RootMeanSquaredError()
+    elif metric_name == "Accuracy":
+        return Accuracy()
+    elif metric_name == "Precision":
+        return Precision()
+    elif metric_name == "Recall":
+        return Recall()
+    elif metric_name == "Confusion Matrix":
+        return ConfusionMatrix()
+    
     # Factory function to get a metric by name.
     # Return a metric instance given its str name.
-    for metric in Metric.metrics:
-        if metric.name == name:
-            return metric
-    return None
+    # for metric in Metric.metrics:
+    #     if metric.name == name:
+    #         return metric
+    # return None
 
 
 class Metric(ABC, MLType):
