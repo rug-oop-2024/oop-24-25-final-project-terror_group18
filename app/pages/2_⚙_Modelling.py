@@ -64,12 +64,14 @@ for observation in selection_observations:
 
 train_test_split = st.slider("Select your train/test split", 0, 100)
 
+predict_button = False
 st.divider()
 st.markdown("*Before you continue, these are your selections so far:*")
 # Y DATA
 if selection_ground_truth is None:
     st.markdown('''
     :red[**Please select something as your ground truth!**]''')
+    predict_button = False
 else:
     st.markdown(f"You have selected the ***{selection_ground_truth}*** "
                 "column as your ground truth.")
@@ -77,11 +79,13 @@ else:
                                     name="Ground Truth Data",
                                     asset_path="Ground Truth.csv")
     st.write(dataframe[selection_ground_truth].head())
+    predict_button = True
 
 # X DATA
 if len(selection_observations) == 0:
     st.markdown('''
     :red[**Please select at least one column as your observations!**]''')
+    predict_button = False
 else:
     st.write(f"You have selected the ***{selection_observations}*** "
              "column as your observations.")
@@ -89,10 +93,9 @@ else:
                                     name="Observations Data",
                                     asset_path="Observations.csv")
     st.write(dataframe[selection_observations].head())
+    predict_button = True
 
 # TRAIN/TEST SPLIT
-        # if train_test_split == 0 or 100: can we use this? 
-        # or should we raise errors
 st.write(f"You have decided to use ***{train_test_split}%*** of your "
          f"data for training and ***{100 - train_test_split}%*** for testing.")
 
@@ -117,6 +120,7 @@ if selection_ground_truth is not None:
                 placeholder="Select one or more metrics...",
                 key=f"multiselect_metrics_{i}"
             )
+            predict_button = True
 
         elif feature.type == "numerical":
             model_choice = st.selectbox(
@@ -134,17 +138,31 @@ if selection_ground_truth is not None:
                 placeholder="Select one or more metrics...",
                 key=f"multiselect_metrics_{i}"
             )
+            predict_button = True
         else:
             st.markdown(
                 ''':red[*You have not selected a model or metrics yet!*]''')
+            predict_button = False
 
         model = get_model(model_choice)
-        
-        # for metric in metric_choice:
-        #     metric = get_metric(metric)
+
+        for metric in metric_choice:
+            metric = get_metric(metric)
 
         #     pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
 
+
+def printtt():
+    st.write("Hi")
+    st.write("Hi")
+    st.write("Hi")
+
+if predict_button:
+    st.divider()
+    st.markdown("*Before you continue, these are your selections so far:*")
+    st.markdown(f"***Model:*** {model_choice}")
+    st.markdown(f"***Metrics:*** {metric_choice}")
+    st.button("Predict", on_click=printtt)
 
 
 # !!!! we might have multiple metrics in list
