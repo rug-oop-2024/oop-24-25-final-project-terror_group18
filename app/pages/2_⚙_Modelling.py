@@ -218,17 +218,17 @@ else:
             if model_choice is not None:
                 if metric_choice is not None:
                     predict_button = True
-                    pipeline = Pipeline(model=model,
-                                        dataset=st.session_state['df_dataset'],
+                    pipeline = Pipeline(model=model.id, # HANDLE ID
+                                        dataset=st.session_state['df_dataset'].id,
                                         input_features=X_data,
                                         target_feature=Y_data,
                                         split=data_split,
                                         metrics=desired_metrics)
                     if st.button("Save Pipeline"):
-                        automl.registry.register(pipeline.artifacts)
+                        automl.registry.register(artifact for artifact in pipeline.artifacts)
 
             #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
-
+# save model & model_id before pipeline; load model by id
 
     def printtt():
         st.write("Hi")
