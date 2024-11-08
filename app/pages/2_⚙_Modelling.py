@@ -26,32 +26,43 @@ automl = AutoMLSystem.get_instance()
 
 datasets = automl.registry.list(type="dataset")
 
-dataframe = st.session_state['dataframe']   # pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
-dataset = Dataset.from_dataframe(data=dataframe, name="Life Expectancy Data",
-                                 asset_path="Life Expectancy Data.csv")
-st.write(dataframe.head())
+def _dataset_is_uploaded():
+    if 'dataframe' not in st.session_state.keys():
+        return False
+    return True
+
+def _select_ground_truth(dataframe):
+    selection_ground_truth = st.selectbox(
+            "Select the column with the data you want to predict:",
+            options=dataframe.columns,
+            placeholder="Select your ground truth...",
+            index=None,
+            key="select_ground_truth",
+        )
+        
+    return selection_ground_truth
+
+if not _dataset_is_uploaded():
+    st.write("Please upload your dataset in the \"Dataset\" page.")
+else:
+    dataframe = st.session_state['dataframe']   # pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
+    dataset = Dataset.from_dataframe(
+        data=dataframe, name="Life Expectancy Data", 
+        asset_path="Life Expectancy Data.csv")
+    st.write(dataframe.head())
 # features_selection = st.column_config.SelectboxColumn(label=None, width=None, help=None, disabled=None, required=None, default=None, options=None)
 
 # data = pd.read_csv(datasets)
 
-dataframe_columns = dataframe.columns
+    selection_ground_truth = new_func(dataframe)
 
-selection_ground_truth = st.selectbox(
-        "Select the column with the data you want to predict:",
+    selection_observations = st.multiselect(
+        "Select your observations columns:",
         options=dataframe.columns,
-        placeholder="Select your ground truth...",
-        index=None,
-        key="select_ground_truth",
+        default=None,          # No default selection
+        placeholder="Select one or more columns...",
+        key="multiselect_observations"
     )
-
-
-selection_observations = st.multiselect(
-    "Select your observations columns:",
-    options=dataframe.columns,
-    default=None,          # No default selection
-    placeholder="Select one or more columns...",
-    key="multiselect_observations"
-)
 
 # ERROR: when we select the same column for both ground truth and observations
 for observation in selection_observations:
