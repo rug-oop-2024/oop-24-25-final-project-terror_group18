@@ -23,16 +23,14 @@ st.write("# ⚙ Modelling")
 write_helper_text("In this section, you can design a machine learning pipeline "
                   "to train a model on a dataset.")
 
-automl = AutoMLSystem.get_instance()
 
-datasets = automl.registry.list(type="dataset")
-
-def _dataset_is_uploaded():
+def dataset_is_uploaded():
     if 'dataframe' not in st.session_state.keys():
         return False
     return True
 
-def _select_ground_truth(dataframe):
+
+def select_ground_truth(dataframe):
     selection_ground_truth = st.selectbox(
             "Select the column with the data you want to predict:",
             options=dataframe.columns,
@@ -40,212 +38,233 @@ def _select_ground_truth(dataframe):
             index=None,
             key="select_ground_truth",
         )
-        
     return selection_ground_truth
 
-if not _dataset_is_uploaded():
+
+def select_observations(dataframe):
+    selection_observations = st.multiselect(
+        "Select your observations columns:",
+        options=dataframe.columns,
+        default=None,
+        placeholder="Select one or more columns...",
+        key="multiselect_observations"
+    )
+    
+    return selection_observations
+
+
+def handle_duplicate_features(selection_ground_truth, selection_observations):
+    # ERROR: when we select the same column for both ground
+    # truth and observations
+    for observation in selection_observations:
+        if observation == selection_ground_truth:
+            st.markdown("You have selected the same column "
+                        f"***{selection_ground_truth}*** "
+                        "for both ground truth and observations.")
+            st.markdown('''
+        :red[**Please select another column for your observations!**]''')
+            selection_observations.remove(observation)
+    return selection_observations
+
+
+def check_is_empty(lst):
+    pass
+
+
+def split_data():
+    return st.slider("Select your train/test split", 0, 100)
+
+
+automl = AutoMLSystem.get_instance()
+datasets = automl.registry.list(type="dataset")
+
+if not dataset_is_uploaded():
     st.write("Please upload your dataset in the \"Dataset\" page.")
 else:
-    dataframe = st.session_state['dataframe']   # pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
+    dataframe = st.session_state['dataframe']
     dataset = Dataset.from_dataframe(
         data=dataframe, name="Life Expectancy Data", 
         asset_path="Life Expectancy Data.csv")
     st.write(dataframe.head())
-# features_selection = st.column_config.SelectboxColumn(label=None, width=None, help=None, disabled=None, required=None, default=None, options=None)
 
-# data = pd.read_csv(datasets)
+    selection_ground_truth = select_ground_truth(dataframe)
+    selection_observations = select_observations(dataframe)
 
-    selection_ground_truth = new_func(dataframe)
+    selection_observations = handle_duplicate_features(
+        selection_ground_truth, selection_observations)
+    # if check_is_empty(selection_observations):
+    #     select_observations(dataframe)
 
-    selection_observations = st.multiselect(
-        "Select your observations columns:",
-        options=dataframe.columns,
-        default=None,          # No default selection
-        placeholder="Select one or more columns...",
-        key="multiselect_observations"
-    )
+    data_split = split_data()
 
-# ERROR: when we select the same column for both ground truth and observations
-for observation in selection_observations:
-    if observation == selection_ground_truth:
-        st.markdown("You have selected the same column "
-                    f"***{selection_ground_truth}*** "
-                    "for both ground truth and observations.")
-        st.markdown('''
-        :red[**Please select another column for your observations!**]''')
-        selection_observations.remove(observation)
-
-
-data_split = st.slider("Select your train/test split", 0, 100)
-
-predict_button = False
-st.divider()
-st.markdown("*Before you continue, these are your selections so far:*")
-# Y DATA
-if selection_ground_truth is None:
-    st.markdown('''
-    :red[**Please select something as your ground truth!**]''')
-else:
-    st.markdown(f"You have selected the ***{selection_ground_truth}*** "
-                "column as your ground truth.")
-    Y_data = Dataset.from_dataframe(data=dataframe[selection_ground_truth],
-                                    name="Ground Truth Data",
-                                    asset_path="Ground Truth.csv")
-    st.write(dataframe[selection_ground_truth].head())
-
-# X DATA
-if len(selection_observations) == 0:
-    st.markdown('''
-    :red[**Please select at least one column as your observations!**]''')
-else:
-    st.write(f"You have selected the ***{selection_observations}*** "
-             "column as your observations.")
-    X_data = Dataset.from_dataframe(data=dataframe[selection_observations],
-                                    name="Observations Data",
-                                    asset_path="Observations.csv")
-    st.write(dataframe[selection_observations].head())
-
-# TRAIN/TEST SPLIT
-st.write(f"You have decided to use ***{data_split}%*** of your "
-         f"data for training and ***{100 - data_split}%*** for testing.")
-# !!!!!!!!!!!!!!!! turn into fractionn
-data_split /= 100
-
-st.divider()
-if selection_ground_truth is not None:
-    model_choice = None
-    metric_choice = None
-    # feature = detect_feature_types(Y_data)
-    # if feature.type == "categorical":
-    #         model_choice = st.selectbox(
-    #             "Select your classification model:",
-    #             options=CLASSIFICATION_MODELS,
-    #             placeholder="Select your model...",
-    #             index=None,
-    #             key=f"classification_model_selectbox_{i}"
-    #         )
-
-    #         metric_choice = st.multiselect(
-    #             "Select your metrics:",
-    #             options=METRICS_CLASSIFICATION,
-    #             default=None,          # No default selection
-    #             placeholder="Select one or more metrics...",
-    #             key=f"multiselect_metrics_{i}"
-    #         )
-
-    # elif feature.type == "numerical":
-    #     model_choice = st.selectbox(
-    #         "Select your regression model:",
-    #         options=REGRESSION_MODELS,
-    #         placeholder="Select your model...",
-    #         index=None,
-    #         key=f"regression_model_selectbox_{i}"
-    #     )
-
-    #     metric_choice = st.multiselect(
-    #         "Select your metrics:",
-    #         options=METRICS_REGRESSION,
-    #         default=None,          # No default selection
-    #         placeholder="Select one or more metrics...",
-    #         key=f"multiselect_metrics_{i}"
-    #     )
-    # else:
-    #     st.markdown(
-    #         ''':red[*You have not selected a model or metrics yet!*]''')
-    for i, feature in enumerate(detect_feature_types(Y_data)):
-        if feature.type == "categorical":
-            model_choice = st.selectbox(
-                "Select your classification model:",
-                options=CLASSIFICATION_MODELS,
-                placeholder="Select your model...",
-                index=None,
-                key=f"classification_model_selectbox_{i}"
-            )
-
-            metric_choice = st.multiselect(
-                "Select your metrics:",
-                options=METRICS_CLASSIFICATION,
-                default=None,          # No default selection
-                placeholder="Select one or more metrics...",
-                key=f"multiselect_metrics_{i}"
-            )
-
-        elif feature.type == "numerical":
-            model_choice = st.selectbox(
-                "Select your regression model:",
-                options=REGRESSION_MODELS,
-                placeholder="Select your model...",
-                index=None,
-                key=f"regression_model_selectbox_{i}"
-            )
-
-            metric_choice = st.multiselect(
-                "Select your metrics:",
-                options=METRICS_REGRESSION,
-                default=None,          # No default selection
-                placeholder="Select one or more metrics...",
-                key=f"multiselect_metrics_{i}"
-            )
-        else:
-            st.markdown(
-                ''':red[*You have not selected a model or metrics yet!*]''')
-
-        model = get_model(model_choice)
-
-        desired_metrics = []
-        for metric in metric_choice:
-            desired_metrics.append(get_metric(metric))
-
-        if model_choice is not None:
-            if metric_choice is not None:
-                predict_button = True
-                pipeline = Pipeline(model=model,
-                                    dataset=st.session_state['df_dataset'],
-                                    input_features=X_data,
-                                    target_feature=Y_data,
-                                    split=data_split,
-                                    metrics=desired_metrics)
-                if st.button("Save Pipeline"):
-                    automl.registry.register(pipeline.artifacts)
-
-        #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
-
-
-def printtt():
-    st.write("Hi")
-    st.write("Hi")
-    st.write("Hi")
-
-
-if predict_button:
+    predict_button = False
     st.divider()
     st.markdown("*Before you continue, these are your selections so far:*")
-    st.markdown(f"***Model:*** {model_choice}")
-    st.markdown(f"***Metrics:*** {metric_choice}")
-    st.button("Predict", on_click=printtt)
-    #if st.button("Predict", on_click=printtt):
-        # st.switch_page("Predictions")
-        #model.fit(X_data, Y_data)... train/test
+    # Y DATA
+    if selection_ground_truth is None:
+        st.markdown('''
+        :red[**Please select something as your ground truth!**]''')
+    else:
+        st.markdown(f"You have selected the ***{selection_ground_truth}*** "
+                    "column as your ground truth.")
+        Y_data = Dataset.from_dataframe(data=dataframe[selection_ground_truth],
+                                        name="Ground Truth Data",
+                                        asset_path="Ground Truth.csv")
+        st.write(dataframe[selection_ground_truth].head())
+
+    # X DATA
+    if len(selection_observations) == 0:
+        st.markdown('''
+        :red[**Please select at least one column as your observations!**]''')
+    else:
+        st.write(f"You have selected the ***{selection_observations}*** "
+                 "column as your observations.")
+        X_data = Dataset.from_dataframe(data=dataframe[selection_observations],
+                                        name="Observations Data",
+                                        asset_path="Observations.csv")
+        st.write(dataframe[selection_observations].head())
+
+    # TRAIN/TEST SPLIT
+    st.write(f"You have decided to use ***{data_split}%*** of your "
+            f"data for training and ***{100 - data_split}%*** for testing.")
+    # !!!!!!!!!!!!!!!! turn into fractionn
+    data_split /= 100
+
+    st.divider()
+    if selection_ground_truth is not None:
+        model_choice = None
+        metric_choice = None
+        # feature = detect_feature_types(Y_data)
+        # if feature.type == "categorical":
+        #         model_choice = st.selectbox(
+        #             "Select your classification model:",
+        #             options=CLASSIFICATION_MODELS,
+        #             placeholder="Select your model...",
+        #             index=None,
+        #             key=f"classification_model_selectbox_{i}"
+        #         )
+
+        #         metric_choice = st.multiselect(
+        #             "Select your metrics:",
+        #             options=METRICS_CLASSIFICATION,
+        #             default=None,          # No default selection
+        #             placeholder="Select one or more metrics...",
+        #             key=f"multiselect_metrics_{i}"
+        #         )
+
+        # elif feature.type == "numerical":
+        #     model_choice = st.selectbox(
+        #         "Select your regression model:",
+        #         options=REGRESSION_MODELS,
+        #         placeholder="Select your model...",
+        #         index=None,
+        #         key=f"regression_model_selectbox_{i}"
+        #     )
+
+        #     metric_choice = st.multiselect(
+        #         "Select your metrics:",
+        #         options=METRICS_REGRESSION,
+        #         default=None,          # No default selection
+        #         placeholder="Select one or more metrics...",
+        #         key=f"multiselect_metrics_{i}"
+        #     )
+        # else:
+        #     st.markdown(
+        #         ''':red[*You have not selected a model or metrics yet!*]''')
+        for i, feature in enumerate(detect_feature_types(Y_data)):
+            if feature.type == "categorical":
+                model_choice = st.selectbox(
+                    "Select your classification model:",
+                    options=CLASSIFICATION_MODELS,
+                    placeholder="Select your model...",
+                    index=None,
+                    key=f"classification_model_selectbox_{i}"
+                )
+
+                metric_choice = st.multiselect(
+                    "Select your metrics:",
+                    options=METRICS_CLASSIFICATION,
+                    default=None,          # No default selection
+                    placeholder="Select one or more metrics...",
+                    key=f"multiselect_metrics_{i}"
+                )
+
+            elif feature.type == "numerical":
+                model_choice = st.selectbox(
+                    "Select your regression model:",
+                    options=REGRESSION_MODELS,
+                    placeholder="Select your model...",
+                    index=None,
+                    key=f"regression_model_selectbox_{i}"
+                )
+
+                metric_choice = st.multiselect(
+                    "Select your metrics:",
+                    options=METRICS_REGRESSION,
+                    default=None,          # No default selection
+                    placeholder="Select one or more metrics...",
+                    key=f"multiselect_metrics_{i}"
+                )
+            else:
+                st.markdown(
+                    ''':red[*You have not selected a model or metrics yet!*]''')
+
+            model = get_model(model_choice)
+
+            desired_metrics = []
+            for metric in metric_choice:
+                desired_metrics.append(get_metric(metric))
+
+            if model_choice is not None:
+                if metric_choice is not None:
+                    predict_button = True
+                    pipeline = Pipeline(model=model,
+                                        dataset=st.session_state['df_dataset'],
+                                        input_features=X_data,
+                                        target_feature=Y_data,
+                                        split=data_split,
+                                        metrics=desired_metrics)
+                    if st.button("Save Pipeline"):
+                        automl.registry.register(pipeline.artifacts)
+
+            #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
+
+
+    def printtt():
+        st.write("Hi")
+        st.write("Hi")
+        st.write("Hi")
+
+
+    if predict_button:
+        st.divider()
+        st.markdown("*Before you continue, these are your selections so far:*")
+        st.markdown(f"***Model:*** {model_choice}")
+        st.markdown(f"***Metrics:*** {metric_choice}")
+        st.button("Predict", on_click=printtt)
+        #if st.button("Predict", on_click=printtt):
+            # st.switch_page("Predictions")
+            #model.fit(X_data, Y_data)... train/test
 
 
 
 
-#pipeline = automl.pipeline(model, X_data, Y_data, data_split)
+    #pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 
-# X_train, X_test, y_train, y_test = train_test_split(
-#     X, y, test_size=(100 - data_split)/100)
+    # X_train, X_test, y_train, y_test = train_test_split(
+    #     X, y, test_size=(100 - data_split)/100)
 
-# pages = {
-#     "Instructions": "./pages/0_✅_Instructions.py",
-#     "Dataset": "./pages/1_📊_Datasets.py",
-#     "Modelling": "./pages/2_⚙_Modelling.py",
-#     "Predictions": "./pages/3_Predictions.py"
-# }
-# selected_page = "Dataset"
-# # Button to switch page
-# switch_page = st.button("Switch page")
-# if switch_page:
-#     # Switch to the selected page
-#     page_file = pages[selected_page]
-#     st.switch_page(page_file):
-#     # ????st.write(f"You are now on page: {selected_page}")
+    # pages = {
+    #     "Instructions": "./pages/0_✅_Instructions.py",
+    #     "Dataset": "./pages/1_📊_Datasets.py",
+    #     "Modelling": "./pages/2_⚙_Modelling.py",
+    #     "Predictions": "./pages/3_Predictions.py"
+    # }
+    # selected_page = "Dataset"
+    # # Button to switch page
+    # switch_page = st.button("Switch page")
+    # if switch_page:
+    #     # Switch to the selected page
+    #     page_file = pages[selected_page]
+    #     st.switch_page(page_file):
+    #     # ????st.write(f"You are now on page: {selected_page}")
