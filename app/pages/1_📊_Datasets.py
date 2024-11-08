@@ -10,6 +10,7 @@ automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 
 # option = st.selectbox(glob("**/*.csv", recursive=True))
+
 dataset_name_to_id = {dt.name: dt.id for dt in datasets}
 options = ["UPLOAD"] + list(dataset_name_to_id.keys())
 option = st.selectbox("Choose Dataset", options)
@@ -32,11 +33,12 @@ if file is not None:
     st.session_state['dataframe'] = df
     st.write(df.head())
     st.write(f"You chose {file_path.removesuffix('.csv')}")
+    df_dataset = Dataset.from_dataframe(
+        data=df, name=file_path.removesuffix('.csv'), asset_path=file_path)
+    st.session_state['df_dataset']= df_dataset
 
     if option == "UPLOAD":
         if st.button("Save Dataset"):
-            df_dataset = Dataset.from_dataframe(
-                data=df, name=file_path.removesuffix('.csv'), asset_path=file_path)
             if df_dataset.asset_path not in [x.asset_path for x in datasets]:
                 # st.write(df_dataset.__str__())
                 automl.registry.register(df_dataset)

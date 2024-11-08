@@ -3,6 +3,7 @@ import pandas as pd
 
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
+from autoop.core.ml.pipeline import Pipeline
 from autoop.functional.feature import detect_feature_types
 from autoop.core.ml.model import REGRESSION_MODELS, CLASSIFICATION_MODELS
 from autoop.core.ml.model import get_model
@@ -198,6 +199,14 @@ if selection_ground_truth is not None:
         if model_choice is not None:
             if metric_choice is not None:
                 predict_button = True
+                pipeline = Pipeline(model=model,
+                                    dataset=st.session_state['df_dataset'],
+                                    input_features=X_data,
+                                    target_feature=Y_data,
+                                    split=data_split,
+                                    metrics=desired_metrics)
+                if st.button("Save Pipeline"):
+                    automl.registry.register(pipeline.artifacts)
 
         #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 
@@ -219,7 +228,7 @@ if predict_button:
         #model.fit(X_data, Y_data)... train/test
 
 
-pipeline = automl.pipeline(model, X_data, Y_data, data_split, desired_metrics)
+
 
 #pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 
