@@ -194,6 +194,8 @@ if selection_ground_truth is not None:
                                     target_feature=Y_data,
                                     split=data_split,
                                     metrics=desired_metrics)
+                if st.button("Save Pipeline"):
+                    automl.registry.register(pipeline.artifacts)
 
         #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 

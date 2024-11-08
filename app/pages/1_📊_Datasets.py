@@ -10,6 +10,7 @@ automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 
 # option = st.selectbox(glob("**/*.csv", recursive=True))
+
 dataset_name_to_id = {dt.name: dt.id for dt in datasets}
 options = ["UPLOAD"] + list(dataset_name_to_id.keys())
 option = st.selectbox("Choose Dataset", options)
