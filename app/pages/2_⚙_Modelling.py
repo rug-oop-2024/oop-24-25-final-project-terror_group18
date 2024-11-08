@@ -13,7 +13,6 @@ from sklearn.model_selection import train_test_split
 
 
 
-
 st.set_page_config(page_title="Modelling", page_icon="📈")
 
 def write_helper_text(text: str):
@@ -27,7 +26,7 @@ automl = AutoMLSystem.get_instance()
 
 datasets = automl.registry.list(type="dataset")
 
-dataframe = pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
+dataframe = st.session_state['dataframe']   # pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
 dataset = Dataset.from_dataframe(data=dataframe, name="Life Expectancy Data",
                                  asset_path="Life Expectancy Data.csv")
 st.write(dataframe.head())

@@ -29,6 +29,7 @@ if file is not None:
         file_path = file.asset_path
         df = file.read()
 
+    st.session_state['dataframe'] = df
     st.write(df.head())
     st.write(f"You chose {file_path.removesuffix('.csv')}")
 
