@@ -104,6 +104,43 @@ st.divider()
 if selection_ground_truth is not None:
     model_choice = None
     metric_choice = None
+    # feature = detect_feature_types(Y_data)
+    # if feature.type == "categorical":
+    #         model_choice = st.selectbox(
+    #             "Select your classification model:",
+    #             options=CLASSIFICATION_MODELS,
+    #             placeholder="Select your model...",
+    #             index=None,
+    #             key=f"classification_model_selectbox_{i}"
+    #         )
+
+    #         metric_choice = st.multiselect(
+    #             "Select your metrics:",
+    #             options=METRICS_CLASSIFICATION,
+    #             default=None,          # No default selection
+    #             placeholder="Select one or more metrics...",
+    #             key=f"multiselect_metrics_{i}"
+    #         )
+
+    # elif feature.type == "numerical":
+    #     model_choice = st.selectbox(
+    #         "Select your regression model:",
+    #         options=REGRESSION_MODELS,
+    #         placeholder="Select your model...",
+    #         index=None,
+    #         key=f"regression_model_selectbox_{i}"
+    #     )
+
+    #     metric_choice = st.multiselect(
+    #         "Select your metrics:",
+    #         options=METRICS_REGRESSION,
+    #         default=None,          # No default selection
+    #         placeholder="Select one or more metrics...",
+    #         key=f"multiselect_metrics_{i}"
+    #     )
+    # else:
+    #     st.markdown(
+    #         ''':red[*You have not selected a model or metrics yet!*]''')
     for i, feature in enumerate(detect_feature_types(Y_data)):
         if feature.type == "categorical":
             model_choice = st.selectbox(
