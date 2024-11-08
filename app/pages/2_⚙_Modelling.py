@@ -8,6 +8,8 @@ from autoop.core.ml.model import REGRESSION_MODELS, CLASSIFICATION_MODELS
 from autoop.core.ml.model import get_model
 from autoop.core.ml.metric import METRICS_CLASSIFICATION, METRICS_REGRESSION
 from autoop.core.ml.metric import get_metric
+from sklearn.model_selection import train_test_split
+
 
 
 
@@ -43,6 +45,7 @@ selection_ground_truth = st.selectbox(
         key="select_ground_truth",
     )
 
+
 selection_observations = st.multiselect(
     "Select your observations columns:",
     options=dataframe.columns,
@@ -62,7 +65,7 @@ for observation in selection_observations:
         selection_observations.remove(observation)
 
 
-train_test_split = st.slider("Select your train/test split", 0, 100)
+data_split = st.slider("Select your train/test split", 0, 100)
 
 predict_button = False
 st.divider()
@@ -92,8 +95,10 @@ else:
     st.write(dataframe[selection_observations].head())
 
 # TRAIN/TEST SPLIT
-st.write(f"You have decided to use ***{train_test_split}%*** of your "
-         f"data for training and ***{100 - train_test_split}%*** for testing.")
+st.write(f"You have decided to use ***{data_split}%*** of your "
+         f"data for training and ***{100 - data_split}%*** for testing.")
+# !!!!!!!!!!!!!!!! turn into fractionn
+data_split /= 100
 
 st.divider()
 if selection_ground_truth is not None:
@@ -147,7 +152,7 @@ if selection_ground_truth is not None:
             if metric_choice is not None:
                 predict_button = True
 
-        #     pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
+        #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 
 
 def printtt():
@@ -162,11 +167,29 @@ if predict_button:
     st.markdown(f"***Model:*** {model_choice}")
     st.markdown(f"***Metrics:*** {metric_choice}")
     st.button("Predict", on_click=printtt)
+    #if st.button("Predict", on_click=printtt):
+        # st.switch_page("Predictions")
+        #model.fit(X_data, Y_data)... train/test
 
 
-pipeline = automl.pipeline(model, X_data, Y_data, train_test_split, desired_metrics)
+pipeline = automl.pipeline(model, X_data, Y_data, data_split, desired_metrics)
 
-#pipeline = automl.pipeline(model, X_data, Y_data, train_test_split)
+#pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 
 # X_train, X_test, y_train, y_test = train_test_split(
-#     X, y, test_size=(100 - train_test_split)/100)
+#     X, y, test_size=(100 - data_split)/100)
+
+# pages = {
+#     "Instructions": "./pages/0_✅_Instructions.py",
+#     "Dataset": "./pages/1_📊_Datasets.py",
+#     "Modelling": "./pages/2_⚙_Modelling.py",
+#     "Predictions": "./pages/3_Predictions.py"
+# }
+# selected_page = "Dataset"
+# # Button to switch page
+# switch_page = st.button("Switch page")
+# if switch_page:
+#     # Switch to the selected page
+#     page_file = pages[selected_page]
+#     st.switch_page(page_file):
+#     # ????st.write(f"You are now on page: {selected_page}")
