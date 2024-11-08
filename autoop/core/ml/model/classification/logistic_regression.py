@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from autoop.core.ml.model.base_model import Model
 
 
-class BinaryLogisticRegression(LogisticRegression, Model):
+class LogisticRegressor(LogisticRegression, Model):
 
     def __init__(self):
         super().__init__()
@@ -15,7 +15,7 @@ class BinaryLogisticRegression(LogisticRegression, Model):
 
     def fit(self, train_x: np.ndarray, train_y: np.array,
             sample_weight=None) -> None:
-        super().fit(self, train_x, train_y, sample_weight)
+        LogisticRegression().fit(self, train_x, train_y, sample_weight)
 
     def predict(self, test_x: np.ndarray) -> float:
-        return super().predict(test_x)
+        return LogisticRegression().predict(test_x)

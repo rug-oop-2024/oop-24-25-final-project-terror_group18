@@ -1,7 +1,7 @@
 from autoop.core.ml.model.regression import MultipleLinearRegression
 from autoop.core.ml.model.regression import LassoRegression
 from autoop.core.ml.model.regression import RidgeRegression
-from autoop.core.ml.model.classification import LogisticRegression
+from autoop.core.ml.model.classification import LogisticRegressor
 from autoop.core.ml.model.classification import KNearestNeighbors
 from autoop.core.ml.model.classification import SupportVectorClassifier
 from autoop.core.ml.model.base_model import Model
@@ -32,7 +32,7 @@ def get_model(model_name: str) -> Model:
     elif model_name == "Ridge Regression":
         return RidgeRegression()
     elif model_name == "Logistic Regressor":
-        return LogisticRegression()
+        return LogisticRegressor()
     elif model_name == "KNN":
         return KNearestNeighbors()
     elif model_name == "Support Vector Classifier":
