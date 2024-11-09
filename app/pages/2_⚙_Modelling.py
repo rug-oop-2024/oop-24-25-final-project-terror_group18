@@ -225,24 +225,22 @@ else:
             if model_choice is not None:
                 if len(desired_metrics) != 0:
                     predict_button = True
-                    pipeline = Pipeline(model=model.name,
+                    pipeline = Pipeline(model=model,
                                         dataset=st.session_state['dataset_id'],
                                         input_features=X_data,
                                         target_feature=Y_data,
                                         split=data_split,
                                         metrics=metric_choice)
                     if st.button("Save Pipeline"):
-                        for artifact in pipeline.artifacts:
-                            automl.registry.register(artifact)
-                        st.write("Pipeline saved.")
+                        try:
+                            for artifact in pipeline.artifacts:
+                                automl.registry.register(artifact)
+                            st.write("Pipeline saved.")
+                        except Exception as e:
+                            st.write(e)
 
             #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 # save model & model_id before pipeline; load model by id
-
-    def printtt():
-        st.write("Hi")
-        st.write("Hi")
-        st.write("Hi")
 
     pages = {
             "Instructions": "./pages/0_✅_Instructions.py",
@@ -258,7 +256,8 @@ else:
         st.markdown("*Before you continue, these are your selections so far:*")
         st.markdown(f"***Model:*** {model_choice}")
         st.markdown(f"***Metrics:*** {metric_choice}")
-        if st.button("Predict", on_click=printtt):
+        if st.button("Predict"):
+            st.session_state["pipeline_id"] = pipeline.id
             page_file = pages[selected_page]
             st.switch_page(page_file)
         #if st.button("Predict", on_click=printtt):

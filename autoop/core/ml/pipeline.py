@@ -8,6 +8,7 @@ from autoop.core.ml.feature import Feature
 from autoop.core.ml.metric import Metric
 from autoop.functional.preprocessing import preprocess_features
 import numpy as np
+import streamlit as st
 
 
 class Pipeline():
@@ -44,7 +45,7 @@ Pipeline(
 """
 
     @property
-    def model(self):
+    def model(self) -> Model:
         return self._model
 
     @property
@@ -68,7 +69,7 @@ Pipeline(
             "split": self._split,
         }
         artifacts.append(Artifact(name="pipeline_config", data=pickle.dumps(pipeline_data)))
-        artifacts.append(self._model.to_artifact(name=f"pipeline_model_{self._model._type}"))
+        artifacts.append(self.model.to_artifact(name=f"pipeline_model_{self.model._type}"))
         return artifacts
     
     def _register_artifact(self, name: str, artifact):

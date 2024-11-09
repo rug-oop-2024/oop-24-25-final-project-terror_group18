@@ -48,4 +48,4 @@ class Model(ABC, MLType):
         except AttributeError:
             return Artifact(name=name,
                             asset_path=name,
-                            model=self)
+                            model=self._model)
