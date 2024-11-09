@@ -120,11 +120,12 @@ Pipeline(
         self._preprocess_features()
         self._split_data()
         self._train()
-        self._evaluate()
-        return {
-            "metrics": self._metrics_results,
-            "predictions": self._predictions,
-        }
+        return self._predictions
+        # self._evaluate()
+        # return {
+        #     "metrics": self._metrics_results,
+        #     "predictions": self._predictions,
+        # }
         
 
     
