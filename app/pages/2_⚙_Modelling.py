@@ -75,7 +75,10 @@ class PreprocessingHandler():
                 self._selection_ground_truth is not None)
 
     def dataset_is_uploaded(self):
-        if 'dataframe' not in st.session_state.keys():
+        # if 'dataframe' not in st.session_state.keys():
+        #     st.write("Please upload your dataset in the \"Dataset\" page.")
+        #     return False
+        if self._dataframe is None:
             st.write("Please upload your dataset in the \"Dataset\" page.")
             return False
         return True
@@ -467,6 +470,8 @@ class PreprocessingHandler():
 #     #     st.switch_page(page_file):
 #     #     # ????st.write(f"You are now on page: {selected_page}")
 
-
-modelling = PreprocessingHandler(st.session_state)
-modelling.run()
+if "data_handler" not in st.session_state:
+    st.write("Please upload your dataset in the \"Dataset\" page.")
+else:
+    modelling = PreprocessingHandler(st.session_state)
+    modelling.run()
