@@ -74,8 +74,9 @@ class PreprocessingHandler():
         self._selection_ground_truth = self._select_ground_truth()
         self._selection_observations = self._select_observations()
         self._handle_duplicate_features()
+
         return (len(self._selection_observations) != 0 and
-                len(self._selection_ground_truth) != 0)
+                self._selection_ground_truth is not None)
 
     def dataset_is_uploaded(self):
         if 'dataframe' not in st.session_state.keys():
@@ -155,6 +156,12 @@ class PreprocessingHandler():
             st.write(self._dataframe.head())
 
             if self._feature_selection():
+                X_data = Dataset.from_dataframe(data=self._dataframe[self.selection_observations],
+                                        name="Observations Data",
+                                        asset_path="Observations.csv")
+                y_data = Dataset.from_dataframe(data=self._dataframe[self.selection_ground_truth],
+                                        name="Ground Truth Data",
+                                        asset_path="Ground Truth.csv")
                 self._pipeline._input_features = self._selection_observations
                 self._pipeline._target_features = self._selection_ground_truth
                 self._pipeline._split = st.slider("Select your train/test split",
