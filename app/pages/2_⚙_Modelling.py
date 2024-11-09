@@ -175,8 +175,29 @@ class PreprocessingHandler():
                                                   target_feature=detect_feature_types(self._y_data)[0],
                                                   split=split)
 
+
                         if st.button("Save Pipeline"):
                             self.save_pipeline()
+                            
+                        pages = {
+                            "Instructions": "./pages/0_✅_Instructions.py",
+                            "Dataset": "./pages/1_📊_Datasets.py",
+                            "Modelling": "./pages/2_⚙_Modelling.py",
+                            "Predictions": "./pages/3_Predictions.py"
+                        }
+
+                        selected_page = "Predictions"
+                        
+                        if st.button("Predict"):
+                            st.divider()
+                            prediction_results = self._pipeline.execute()
+                            st.markdown("*Before you continue, these are your selections so far:*")
+                            st.markdown(f"***Model:*** {self._model_choice}")
+                            st.markdown(f"***Metrics:*** {self._metric_choice}")
+                            if st.button("Predict"):
+                                st.session_state["prediction_results"] = prediction_results
+                                page_file = pages[selected_page]
+                                st.switch_page(page_file)
 
 
 
