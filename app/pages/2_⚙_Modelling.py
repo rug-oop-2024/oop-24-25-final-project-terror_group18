@@ -78,7 +78,7 @@ class PreprocessingHandler():
         # if 'dataframe' not in st.session_state.keys():
         #     st.write("Please upload your dataset in the \"Dataset\" page.")
         #     return False
-        if self._dataframe is None:
+        if self._dataframe is None and 'dataframe' not in st.session_state.keys():
             st.write("Please upload your dataset in the \"Dataset\" page.")
             return False
         return True
