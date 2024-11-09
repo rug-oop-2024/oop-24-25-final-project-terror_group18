@@ -35,11 +35,7 @@ class PreprocessingHandler():
         self._dataset = None
         self._dataframe = None
         self._data_handler = session_state['data_handler']
-        self._pipeline = Pipeline(metrics=[],
-                                  dataset=None,
-                                  model=None,
-                                  input_features=None,
-                                  target_feature=None)
+        self._pipeline = None
 
 
     def select_ground_truth(self):
@@ -156,25 +152,29 @@ class PreprocessingHandler():
             st.write(self._dataframe.head())
 
             if self._feature_selection():
-                X_data = Dataset.from_dataframe(data=self._dataframe[self.selection_observations],
+                X_data = Dataset.from_dataframe(data=self._dataframe[self._selection_observations],
                                         name="Observations Data",
                                         asset_path="Observations.csv")
-                y_data = Dataset.from_dataframe(data=self._dataframe[self.selection_ground_truth],
+                y_data = Dataset.from_dataframe(data=self._dataframe[self._selection_ground_truth],
                                         name="Ground Truth Data",
                                         asset_path="Ground Truth.csv")
-                self._pipeline._input_features = self._selection_observations
-                self._pipeline._target_features = self._selection_ground_truth
-                self._pipeline._split = st.slider("Select your train/test split",
+                split = st.slider("Select your train/test split",
                                                   0, 100, value=80)                
                 if self._select_model():
                     self._model = get_model(self._model_choice)
                     self._pipeline._model = self._model.name
 
                     if self._select_metrics():
-                        self._pipeline._metrics = self._metric_choice
                         self._desired_metrics = []
                         for metric in self._metric_choice:
                             self._desired_metrics.append(get_metric(metric))
+
+                        self._pipeline = Pipeline(metrics=self._desired_metrics,
+                                                  dataset=self._dataset,
+                                                  model=self._model,
+                                                  input_features=detect_feature_types(X_data),
+                                                  target_feature=detect_feature_types(y_data)[0],
+                                                  split=split)
 
                         if st.button("Save Pipeline"):
                             self.save_pipeline()
