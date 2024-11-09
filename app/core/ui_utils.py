@@ -43,6 +43,7 @@ class DataHandler:
         #st.session_state['df_dataset'] = self._dataset
         #st.session_state['dataset_id'] = self._dataset_id
 
+    @property
     def dataset(self):
         return deepcopy(self._dataset)
 
