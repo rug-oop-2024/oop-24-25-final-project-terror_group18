@@ -39,8 +39,12 @@ class Artifact(BaseModel):
         self.type = type
         self.asset["data"] = data
 
-        for key, value in kwargs:
-            setattr(self, key, value)
+        try:
+            for key, value in kwargs:
+                setattr(self, key, value)
+        except ValueError:
+            raise ValueError(f"kwargs are {kwargs}")
+
 
     def read(self) -> pd.DataFrame:
         """

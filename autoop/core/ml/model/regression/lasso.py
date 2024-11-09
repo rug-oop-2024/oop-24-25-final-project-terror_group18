@@ -10,10 +10,11 @@ class LassoRegression(Lasso, Model):
         super().__init__()
         self.type = "regression"
         self.name = "Lasso Regression"
-        self._lasso = Lasso(alpha)
+        self._model = Lasso(alpha)
 
     def fit(self, train_X: np.ndarray, train_y: np.ndarray, **kwargs) -> None:
-        self._lasso.fit(self, train_X, train_y, kwargs)
+        self._model.fit(self, train_X, train_y, kwargs)
+        self._parameters = self._model.get_params()
 
     def predict(self, test_X: np.ndarray) -> np.ndarray:
-        return self._lasso.predict(test_X)
+        return self._model.predict(test_X)

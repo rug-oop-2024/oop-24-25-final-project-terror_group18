@@ -218,7 +218,7 @@ else:
             if model_choice is not None:
                 if metric_choice is not None:
                     predict_button = True
-                    pipeline = Pipeline(model=model.id, # HANDLE ID
+                    pipeline = Pipeline(model=model,
                                         dataset=st.session_state['df_dataset'].id,
                                         input_features=X_data,
                                         target_feature=Y_data,
