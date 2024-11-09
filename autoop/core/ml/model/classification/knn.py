@@ -18,4 +18,4 @@ class KNearestNeighbors(Model):
         self._model.fit(train_x, train_y)
 
     def predict(self, test_x: np.ndarray) -> float:
-        return super().predict(test_x)
+        return self._model.predict(test_x)
