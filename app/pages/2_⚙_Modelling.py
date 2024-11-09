@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 
 from app.core.system import AutoMLSystem
+from app.core.ui_utils import DataHandler
 from autoop.core.ml.dataset import Dataset
 from autoop.core.ml.pipeline import Pipeline
 from autoop.functional.feature import detect_feature_types
@@ -11,17 +12,140 @@ from autoop.core.ml.metric import METRICS_CLASSIFICATION, METRICS_REGRESSION
 from autoop.core.ml.metric import get_metric
 from sklearn.model_selection import train_test_split
 
-
-
-
 st.set_page_config(page_title="Modelling", page_icon="📈")
+
 
 def write_helper_text(text: str):
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
+
 st.write("# ⚙ Modelling")
 write_helper_text("In this section, you can design a machine learning pipeline "
                   "to train a model on a dataset.")
+
+"""
+class PreprocessingHandler():
+
+    def __init__(self, session_state):
+        self._model = None
+        self._desired_metrics = None
+        self._dataset = None
+        self._dataframe = None
+        self._data_handler = session_state['data_handler']
+        self._pipeline = Pipeline(metrics=[],
+                                  dataset=None,
+                                  model=None,
+                                  input_features=None,
+                                  target_feature=None)
+
+    def run(self):
+        if dataset_is_uploaded():
+            self._dataframe = self._data_handler.df
+            self._dataset = self._data_handler.dataset
+            st.write(dataframe.head())
+
+            if self._feature_selection():
+                self._pipeline._input_features = self._selection_observations
+                self._pipeline._target_features = self._selection_ground_truth
+                self._pipeline._split = st.slider("Select your train/test split",
+                                                  0, 100, value=0.8)                
+                if self._select_model():
+                    self._model = get_model(model_choice)
+                    self._pipeline._model = self._model.name
+
+                    if self._select_metrics():
+                        self._pipeline._metrics = self._metric_choice
+                        self._desired_metrics = []
+                        for metric in self._metric_choice:
+                            self._desired_metrics.append(get_metric(metric))
+
+                        if st.button("Save Pipeline"):
+                            self.save_pipeline()
+
+    def save_pipeline(self):
+        for artifact in self._pipeline.artifacts:
+            automl.registry.register(artifact)
+            self._data_handler.save_in_registry(self._dataset)
+        st.write("Pipeline saved.")
+
+    def _feature_selection(self):
+        self._selection_ground_truth = self._select_ground_truth()
+        self._selection_observations = self._select_observations()
+        self._handle_duplicate_features()
+        return (len(self._selection_observations) != 0 and
+                len(self._selection_ground_truth) != 0)
+
+    def dataset_is_uploaded(self):
+        if 'dataframe' not in st.session_state.keys():
+            st.write("Please upload your dataset in the \"Dataset\" page.")
+            return False
+        return True
+
+    def _select_ground_truth(self):
+        selection_ground_truth = st.selectbox(
+            "Select the column with the data you want to predict:",
+            options=self._dataframe.columns,
+            placeholder="Select your ground truth...",
+            index=None,
+            key="select_ground_truth",
+        )
+        return selection_ground_truth
+
+    def _select_observations(self):
+        selection_observations = st.multiselect(
+            "Select your observations columns:",
+            options=self._dataframe.columns,
+            default=None,
+            placeholder="Select one or more columns...",
+            key="multiselect_observations"
+        )
+
+        return selection_observations
+
+    def _handle_duplicate_features(self):
+        # ERROR: when we select the same column for both ground
+        # truth and observations
+        for observation in self._selection_observations:
+            if observation == selection_ground_truth:
+                st.markdown("You have selected the same column "
+                            f"***{self._selection_ground_truth}*** "
+                            "for both ground truth and observations.")
+                st.markdown('''
+            :red[**Please select another column for your observations!**]''')
+                self._selection_observations.remove(observation)
+        # return selection_observation
+        
+    def _select_model(self):
+        types_options = {"categorial":["classification", CLASSIFICATION_MODELS],
+                            "numerical":["regression", REGRESSION_MODELS]}
+        for i, feature_type in enumerate(detect_feature_types(Y_data)):
+            self._feature_type = feature_type
+            self._model_choice = st.selectbox(
+                f"Select your {types_options[feature_type][0]} model:",
+                options=types_options[feature_type][1],
+                placeholder="Select your model...",
+                index=None,
+                key=f"classification_model_selectbox_{i}"
+            )
+            if self._model_choice is None:
+                st.markdown(
+                ''':red[*You have not selected a model or metrics yet!*]''')
+                return False
+            return True
+    def _select_metrics(self):
+        metrics_types = {'categorical': METRICS_CLASSIFICATION,
+                         'numerical': METRICS_REGRESSION}
+        self._metric_choice = st.multiselect(
+                    "Select your metrics:",
+                    options=metrics_types[self._feature_type],
+                    default=None,  # No default selection
+                    placeholder="Select one or more metrics...",
+                    key=f"multiselect_metrics_{i}"
+                )
+        return self._metric_choice is not None
+"""
+
+
 
 
 def dataset_is_uploaded():
@@ -32,12 +156,12 @@ def dataset_is_uploaded():
 
 def select_ground_truth(dataframe):
     selection_ground_truth = st.selectbox(
-            "Select the column with the data you want to predict:",
-            options=dataframe.columns,
-            placeholder="Select your ground truth...",
-            index=None,
-            key="select_ground_truth",
-        )
+        "Select the column with the data you want to predict:",
+        options=dataframe.columns,
+        placeholder="Select your ground truth...",
+        index=None,
+        key="select_ground_truth",
+    )
     return selection_ground_truth
 
 
@@ -49,7 +173,7 @@ def select_observations(dataframe):
         placeholder="Select one or more columns...",
         key="multiselect_observations"
     )
-    
+
     return selection_observations
 
 
@@ -82,9 +206,7 @@ if not dataset_is_uploaded():
     st.write("Please upload your dataset in the \"Dataset\" page.")
 else:
     dataframe = st.session_state['dataframe']
-    dataset = Dataset.from_dataframe(
-        data=dataframe, name="Life Expectancy Data", 
-        asset_path="Life Expectancy Data.csv")
+    dataset = st.session_state['data_handler'].dataset
     st.write(dataframe.head())
 
     selection_ground_truth = select_ground_truth(dataframe)
@@ -126,7 +248,7 @@ else:
 
     # TRAIN/TEST SPLIT
     st.write(f"You have decided to use ***{data_split}%*** of your "
-            f"data for training and ***{100 - data_split}%*** for testing.")
+             f"data for training and ***{100 - data_split}%*** for testing.")
     # !!!!!!!!!!!!!!!! turn into fractionn
     data_split /= 100
 
@@ -184,7 +306,7 @@ else:
                 metric_choice = st.multiselect(
                     "Select your metrics:",
                     options=METRICS_CLASSIFICATION,
-                    default=None,          # No default selection
+                    default=None,  # No default selection
                     placeholder="Select one or more metrics...",
                     key=f"multiselect_metrics_{i}"
                 )
@@ -201,7 +323,7 @@ else:
                 metric_choice = st.multiselect(
                     "Select your metrics:",
                     options=METRICS_REGRESSION,
-                    default=None,          # No default selection
+                    default=None,  # No default selection
                     placeholder="Select one or more metrics...",
                     key=f"multiselect_metrics_{i}"
                 )
@@ -227,10 +349,13 @@ else:
                     if st.button("Save Pipeline"):
                         for artifact in pipeline.artifacts:
                             automl.registry.register(artifact)
+                            DataHandler.save_in_registry(dataset)
                         st.write("Pipeline saved.")
 
             #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
-# save model & model_id before pipeline; load model by id
+
+
+    # save model & model_id before pipeline; load model by id
 
     def printtt():
         st.write("Hi")
@@ -244,14 +369,11 @@ else:
         st.markdown(f"***Model:*** {model_choice}")
         st.markdown(f"***Metrics:*** {metric_choice}")
         st.button("Predict", on_click=printtt)
-        #if st.button("Predict", on_click=printtt):
-            # st.switch_page("Predictions")
-            #model.fit(X_data, Y_data)... train/test
+        # if st.button("Predict", on_click=printtt):
+        # st.switch_page("Predictions")
+        # model.fit(X_data, Y_data)... train/test
 
-
-
-
-    #pipeline = automl.pipeline(model, X_data, Y_data, data_split)
+    # pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 
     # X_train, X_test, y_train, y_test = train_test_split(
     #     X, y, test_size=(100 - data_split)/100)
