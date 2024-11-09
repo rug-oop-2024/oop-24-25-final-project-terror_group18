@@ -116,12 +116,12 @@ class PreprocessingHandler():
         
     def _select_model(self):
         types_options = {"categorial":["classification", CLASSIFICATION_MODELS],
-                            "numerical":["regression", REGRESSION_MODELS]}
+                        "numerical":["regression", REGRESSION_MODELS]}
         for i, feature_type in enumerate(detect_feature_types(self._y_data)):
-            self._feature_type = feature_type
+            self._feature_type = feature_type.type
             self._model_choice = st.selectbox(
-                f"Select your {types_options[feature_type][0]} model:",
-                options=types_options[feature_type][1],
+                f"Select your {types_options[self._feature_type][0]} model:",
+                options=types_options[self._feature_type][1],
                 placeholder="Select your model...",
                 index=None,
                 key=f"classification_model_selectbox_{i}"
@@ -162,7 +162,6 @@ class PreprocessingHandler():
                                                   0, 100, value=80)                
                 if self._select_model():
                     self._model = get_model(self._model_choice)
-                    self._pipeline._model = self._model.name
 
                     if self._select_metrics():
                         self._desired_metrics = []
