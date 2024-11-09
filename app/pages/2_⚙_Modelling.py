@@ -159,18 +159,18 @@ class PreprocessingHandler():
                 self._pipeline._target_features = self._selection_ground_truth
                 self._pipeline._split = st.slider("Select your train/test split",
                                                   0, 100, value=80)                
-                # if self._select_model():
-                #     self._model = get_model(model_choice)
-                #     self._pipeline._model = self._model.name
+                if self._select_model():
+                    self._model = get_model(model_choice)
+                    self._pipeline._model = self._model.name
 
-                #     if self._select_metrics():
-                #         self._pipeline._metrics = self._metric_choice
-                #         self._desired_metrics = []
-                #         for metric in self._metric_choice:
-                #             self._desired_metrics.append(get_metric(metric))
+                    if self._select_metrics():
+                        self._pipeline._metrics = self._metric_choice
+                        self._desired_metrics = []
+                        for metric in self._metric_choice:
+                            self._desired_metrics.append(get_metric(metric))
 
-                #         if st.button("Save Pipeline"):
-                #             self.save_pipeline()
+                        if st.button("Save Pipeline"):
+                            self.save_pipeline()
 
 
 
