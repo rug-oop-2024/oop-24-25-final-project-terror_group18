@@ -70,15 +70,18 @@ class PreprocessingHandler():
         self._selection_ground_truth = self._select_ground_truth()
         self._selection_observations = self._select_observations()
         self._handle_duplicate_features()
-
+        st.write(':red[WARNING: All rows with NaN values will be dropped.]')
+        self._dataframe.dropna(subset=self._selection_observations, inplace=True)
+        self._dataframe.dropna(subset=[self._selection_ground_truth], inplace=True)
         return (len(self._selection_observations) != 0 and
                 self._selection_ground_truth is not None)
+
 
     def dataset_is_uploaded(self):
         # if 'dataframe' not in st.session_state.keys():
         #     st.write("Please upload your dataset in the \"Dataset\" page.")
         #     return False
-        if self._dataframe is None and 'dataframe' not in st.session_state.keys():
+        if self._dataframe is None or 'dataframe' not in st.session_state.keys():
             st.write("Please upload your dataset in the \"Dataset\" page.")
             return False
         return True
