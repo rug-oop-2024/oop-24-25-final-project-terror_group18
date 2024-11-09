@@ -22,7 +22,7 @@ class DataHandler:
     def _choose_file(self):
         self._option = st.selectbox("Choose Dataset", self._options)
         if self._option is None:
-            st.write('Please select something')
+            st.write('Please select something.')
         if self._option == "UPLOAD":
             self._file = st.file_uploader("Choose a file", type='csv')
             if self._file is not None:
