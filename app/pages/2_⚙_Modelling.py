@@ -235,6 +235,25 @@ class PreprocessingHandler():
                             #     st.switch_page(page_file)
 
 
+'''                         data_x = np.asarray(self._dataframe[self._selection_observations])
+                            data_y = np.asarray([self._dataframe[self._selection_ground_truth]]).transpose()
+                            train_x,train_y,test_x,test_y = train_test_split(data_x, data_y,
+                                                                              train_size=data_split/100,
+                                                                              shuffle=False)
+                            self._model.fit(train_x, train_y)
+                            y_pred = self._model.predict(test_x)
+                            metric_results = []
+                            for metric in self._desired_metrics:
+                                metric_results.append({metric.name : metric.evaluate(test_y, y_pred)})
+
+                            st.write("Predictions:")
+                            st.write(pd.DataFrame(y_pred).head())
+                            st.write("Metrics")
+                            for metric, result in metric_results:
+                                st.markdown(f"{metric}: {result}")
+'''
+
+
 # def dataset_is_uploaded():
 #     if 'dataframe' not in st.session_state.keys():
 #         return False
@@ -263,22 +282,7 @@ class PreprocessingHandler():
 
 #     return selection_observations
 
-'''                         data_x = np.asarray(self._dataframe[self._selection_observations])
-                            data_y = np.asarray([self._dataframe[self._selection_ground_truth]]).transpose()
-                            train_x,train_y,test_x,test_y = train_test_split(data_x, data_y,
-                                                                              train_size=data_split/100,
-                                                                              shuffle=False)
-                            self._model.fit(train_x, train_y)
-                            y_pred = self._model.predict(test_x)
-                            metric_results = []
-                            for metric in self._desired_metrics:
-                                metric_results.append({metric.name : metric.evaluate(test_y, y_pred)})
 
-                            st.write("Predictions:")
-                            st.write(pd.DataFrame(y_pred).head())
-                            st.write("Metrics")
-                            for metric, result in metric_results:
-                                st.markdown(f"{metric}: {result}")'''
 
 # def handle_duplicate_features(selection_ground_truth, selection_observations):
 #     # ERROR: when we select the same column for both ground
