@@ -13,7 +13,7 @@ class LassoRegression(Model):
         self._model = Lasso(alpha)
 
     def fit(self, train_X: np.ndarray, train_y: np.ndarray, **kwargs) -> None:
-        self._model.fit(self, train_X, train_y, kwargs)
+        self._model.fit(train_X, train_y, **kwargs)
         #self._model.coef_
 
     def predict(self, test_X: np.ndarray) -> np.ndarray:

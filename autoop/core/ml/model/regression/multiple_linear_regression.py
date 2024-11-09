@@ -13,7 +13,7 @@ class MultipleLinearRegression(Model):
         self._model = LinearRegression()
 
     def fit(self, train_X: np.ndarray, train_y: np.ndarray, **kwargs) -> None:
-        self._model.fit(train_X, train_y, kwargs)
+        self._model.fit(train_X, train_y, **kwargs)
         self._parameters = self._model.get_params()
 
     def predict(self, test_X: np.ndarray) -> np.ndarray:
