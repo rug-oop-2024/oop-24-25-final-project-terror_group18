@@ -138,7 +138,8 @@ class PreprocessingHandler():
     def _select_metrics(self):
         metrics_types = {'categorical': METRICS_CLASSIFICATION,
                          'numerical': METRICS_REGRESSION}
-        for i in range(len(metrics_types[self._feature_type])):
+        for i, feature_type in enumerate(detect_feature_types(self._y_data)):
+            self._feature_type = feature_type.type
             self._metric_choice = st.multiselect(
                     "Select your metrics:",
                     options=metrics_types[self._feature_type],
