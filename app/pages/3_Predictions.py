@@ -5,6 +5,21 @@ from autoop.core.ml.dataset import Dataset
 from sklearn.model_selection import train_test_split
 
 
+
+st.set_page_config(page_title="Predictions", page_icon="🗠")
+
+def write_helper_text(text: str):
+    st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
+
+st.write("# 🗠 Predictions")
+write_helper_text("These are your predictions for the given dataset:")
+
+if "pipeline_results" not in st.session_state.keys():
+    st.write("Please select a pipeline first.")
+else:
+    st.write(st.session_state["pipeline_results"])
+
+
 # st.set_page_config(page_title="Modelling", page_icon="📈")
 # dataframe = pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
 # dataset = Dataset.from_dataframe(data=dataframe, name="Life Expectancy Data",

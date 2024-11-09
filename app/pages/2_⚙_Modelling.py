@@ -237,10 +237,12 @@ else:
                                 automl.registry.register(artifact)
                             st.write("Pipeline saved.")
                         except Exception as e:
-                            st.write(e)
+                            st.write(e) #maybe we dont need the try except anymore...
 
             #     pipeline = automl.pipeline(model, X_data, Y_data, data_split)
 # save model & model_id before pipeline; load model by id
+
+    
 
     pages = {
             "Instructions": "./pages/0_✅_Instructions.py",
@@ -251,13 +253,15 @@ else:
     
     selected_page = "Predictions"
 
+
     if predict_button:
         st.divider()
+        predict_results = pipeline.execute()
         st.markdown("*Before you continue, these are your selections so far:*")
         st.markdown(f"***Model:*** {model_choice}")
         st.markdown(f"***Metrics:*** {metric_choice}")
         if st.button("Predict"):
-            st.session_state["pipeline_id"] = pipeline.id
+            st.session_state["pipeline_results"] = predict_results
             page_file = pages[selected_page]
             st.switch_page(page_file)
         #if st.button("Predict", on_click=printtt):
