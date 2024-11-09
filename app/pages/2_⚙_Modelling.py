@@ -348,7 +348,8 @@ else:
                 if len(desired_metrics) != 0:
                     predict_button = True
                     pipeline = Pipeline(model=model,
-                                        dataset=st.session_state['dataset_id'],
+                                        dataset=dataset,
+                                        # dataset=st.session_state['dataset_id'],
                                         input_features=X_data,
                                         target_feature=Y_data,
                                         split=data_split,
