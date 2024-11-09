@@ -1,3 +1,4 @@
+import numpy as np
 import streamlit as st
 import pandas as pd
 
@@ -10,7 +11,7 @@ from autoop.core.ml.model import REGRESSION_MODELS, CLASSIFICATION_MODELS
 from autoop.core.ml.model import get_model
 from autoop.core.ml.metric import METRICS_CLASSIFICATION, METRICS_REGRESSION
 from autoop.core.ml.metric import get_metric
-from sklearn.model_selection import train_test_split 
+from sklearn.model_selection import train_test_split
 
 st.set_page_config(page_title="Modelling", page_icon="📈")
 
@@ -26,6 +27,7 @@ write_helper_text("In this section, you can design a machine learning pipeline "
 automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 
+
 class PreprocessingHandler():
 
     def __init__(self, session_state):
@@ -37,7 +39,6 @@ class PreprocessingHandler():
         self._data_handler = session_state['data_handler']
         self._pipeline = None
 
-
     def select_ground_truth(self):
         selection_ground_truth = st.selectbox(
             "Select the column with the data you want to predict:",
@@ -47,7 +48,6 @@ class PreprocessingHandler():
             key="select_ground_truth",
         )
         return selection_ground_truth
-
 
     def select_observations(self):
         selection_observations = st.multiselect(
@@ -128,10 +128,10 @@ class PreprocessingHandler():
             :red[**Please select another column for your observations!**]''')
                 self._selection_observations.remove(observation)
         return self._selection_observations
-        
+
     def _select_model(self):
-        types_options = {"categorical":["classification", CLASSIFICATION_MODELS],
-                        "numerical":["regression", REGRESSION_MODELS]}
+        types_options = {"categorical": ["classification", CLASSIFICATION_MODELS],
+                         "numerical": ["regression", REGRESSION_MODELS]}
         for i, feature_type in enumerate(detect_feature_types(self._y_data)):
             self._feature_type = feature_type.type
             self._model_choice = st.selectbox(
@@ -143,7 +143,7 @@ class PreprocessingHandler():
             )
             if self._model_choice is None:
                 st.markdown(
-                ''':red[*You have not selected a model or metrics yet!*]''')
+                    ''':red[*You have not selected a model or metrics yet!*]''')
                 return False
             return True
 
@@ -153,22 +153,29 @@ class PreprocessingHandler():
         for i, feature_type in enumerate(detect_feature_types(self._y_data)):
             self._feature_type = feature_type.type
             self._metric_choice = st.multiselect(
-                    "Select your metrics:",
-                    options=metrics_types[self._feature_type],
-                    default=None,  # No default selection
-                    placeholder="Select one or more metrics...",
-                    key=f"multiselect_metrics_{i}"
-                )
+                "Select your metrics:",
+                options=metrics_types[self._feature_type],
+                default=None,  # No default selection
+                placeholder="Select one or more metrics...",
+                key=f"multiselect_metrics_{i}"
+            )
         return self._metric_choice is not None
-    
-    
-    
+
+    def validate_data(self):
+        data_x = np.asarray(self._dataframe[self._selection_observations])
+        data_y = np.asarray([self._dataframe[self._selection_ground_truth]])
+        if data_x.shape[0] != data_y.shape[0]:
+            data_y.transpose()
+        return data_x, data_y
+
 
 
     def run(self):
         if self.dataset_is_uploaded:
             self._dataframe = self._data_handler.df
             self._dataset = self._data_handler.dataset
+            if not isinstance(self._dataset, Dataset):
+                raise TypeError(f"{type(self._dataset)} is not Dataset ")
             st.write(self._dataframe.head())
 
             if self._can_load_existing_pipelines():
@@ -177,18 +184,21 @@ class PreprocessingHandler():
 
             if self._feature_selection():
                 self._X_data = Dataset.from_dataframe(data=self._dataframe[self._selection_observations],
-                                        name="Observations Data",
-                                        asset_path="Observations.csv")
+                                                      name="Observations Data",
+                                                      asset_path="Observations.csv")
                 self._y_data = Dataset.from_dataframe(data=self._dataframe[self._selection_ground_truth],
-                                        name="Ground Truth Data",
-                                        asset_path="Ground Truth.csv")
+                                                      name="Ground Truth Data",
+                                                      asset_path="Ground Truth.csv")
                 data_split = st.slider("Select your train/test split",
-                                                  0, 100, value=80)      
-                data_split          
+                                       0, 100, value=80)/100
+
                 if self._select_model():
                     self._model = get_model(self._model_choice)
 
                     if self._select_metrics():
+                        st.markdown("*Before you continue, these are your selections so far:*")
+                        st.markdown(f"***Model:*** {self._model_choice}")
+                        st.markdown(f"***Metrics:*** {self._metric_choice}")
                         self._desired_metrics = []
                         for metric in self._metric_choice:
                             self._desired_metrics.append(get_metric(metric))
@@ -200,7 +210,6 @@ class PreprocessingHandler():
                                                   target_feature=detect_feature_types(self._y_data)[0],
                                                   split=data_split)
 
-
                         if st.button("Save Pipeline"):
                             self.save_pipeline()
 
@@ -211,24 +220,19 @@ class PreprocessingHandler():
                             "Predictions": "./pages/3_Predictions.py"
                         }
 
-                        selected_page = "Predictions"
-
                         if st.button("Predict"):
+                            selected_page = "Predictions"
+
                             st.divider()
-                            # prediction_results = self._pipeline.execute()
+                            prediction_results = self._pipeline.execute()
 
 
 
-                            st.markdown("*Before you continue, these are your selections so far:*")
-                            st.markdown(f"***Model:*** {self._model_choice}")
-                            st.markdown(f"***Metrics:*** {self._metric_choice}")
-                            if st.button("Predict"):
-                                st.session_state["prediction_results"] = prediction_results
-                                page_file = pages[selected_page]
-                                st.switch_page(page_file)
 
-
-
+                            # if st.button("Predict"):
+                            #     st.session_state["prediction_results"] = prediction_results
+                            #     page_file = pages[selected_page]
+                            #     st.switch_page(page_file)
 
 
 # def dataset_is_uploaded():
@@ -259,6 +263,22 @@ class PreprocessingHandler():
 
 #     return selection_observations
 
+'''                         data_x = np.asarray(self._dataframe[self._selection_observations])
+                            data_y = np.asarray([self._dataframe[self._selection_ground_truth]]).transpose()
+                            train_x,train_y,test_x,test_y = train_test_split(data_x, data_y,
+                                                                              train_size=data_split/100,
+                                                                              shuffle=False)
+                            self._model.fit(train_x, train_y)
+                            y_pred = self._model.predict(test_x)
+                            metric_results = []
+                            for metric in self._desired_metrics:
+                                metric_results.append({metric.name : metric.evaluate(test_y, y_pred)})
+
+                            st.write("Predictions:")
+                            st.write(pd.DataFrame(y_pred).head())
+                            st.write("Metrics")
+                            for metric, result in metric_results:
+                                st.markdown(f"{metric}: {result}")'''
 
 # def handle_duplicate_features(selection_ground_truth, selection_observations):
 #     # ERROR: when we select the same column for both ground
@@ -453,7 +473,6 @@ class PreprocessingHandler():
 
 
 #     # save model & model_id before pipeline; load model by id
-
 
 
 #     pages = {

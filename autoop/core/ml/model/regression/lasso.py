@@ -18,3 +18,6 @@ class LassoRegression(Model):
 
     def predict(self, test_X: np.ndarray) -> np.ndarray:
         return self._model.predict(test_X)
+
+    def shape(self):
+        return self._model.shape
