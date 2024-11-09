@@ -42,10 +42,10 @@ class PreprocessingHandler():
                                   target_feature=None)
 
 
-    def select_ground_truth(dataframe):
+    def select_ground_truth(self):
         selection_ground_truth = st.selectbox(
             "Select the column with the data you want to predict:",
-            options=dataframe.columns,
+            options=self._dataframe.columns,
             placeholder="Select your ground truth...",
             index=None,
             key="select_ground_truth",
@@ -53,10 +53,10 @@ class PreprocessingHandler():
         return selection_ground_truth
 
 
-    def select_observations(dataframe):
+    def select_observations(self):
         selection_observations = st.multiselect(
             "Select your observations columns:",
-            options=dataframe.columns,
+            options=self._dataframe.columns,
             default=None,
             placeholder="Select one or more columns...",
             key="multiselect_observations"
@@ -73,7 +73,7 @@ class PreprocessingHandler():
     def _feature_selection(self):
         self._selection_ground_truth = self._select_ground_truth()
         self._selection_observations = self._select_observations()
-        self._handle_duplicate_features
+        self._handle_duplicate_features()
         return (len(self._selection_observations) != 0 and
                 len(self._selection_ground_truth) != 0)
 
@@ -104,8 +104,7 @@ class PreprocessingHandler():
 
         return selection_observations
 
-    def _handle_duplicate_features(
-            self):
+    def _handle_duplicate_features(self):
         # ERROR: when we select the same column for both ground
         # truth and observations
         for observation in self._selection_observations:
@@ -121,7 +120,7 @@ class PreprocessingHandler():
     def _select_model(self):
         types_options = {"categorial":["classification", CLASSIFICATION_MODELS],
                             "numerical":["regression", REGRESSION_MODELS]}
-        for i, feature_type in enumerate(detect_feature_types(Y_data)):
+        for i, feature_type in enumerate(detect_feature_types(self._selection_ground_truth)):
             self._feature_type = feature_type
             self._model_choice = st.selectbox(
                 f"Select your {types_options[feature_type][0]} model:",
@@ -135,10 +134,12 @@ class PreprocessingHandler():
                 ''':red[*You have not selected a model or metrics yet!*]''')
                 return False
             return True
+
     def _select_metrics(self):
         metrics_types = {'categorical': METRICS_CLASSIFICATION,
                          'numerical': METRICS_REGRESSION}
-        self._metric_choice = st.multiselect(
+        for i in range(metrics_types[self._feature_type]):
+            self._metric_choice = st.multiselect(
                     "Select your metrics:",
                     options=metrics_types[self._feature_type],
                     default=None,  # No default selection
