@@ -8,14 +8,13 @@ class LogisticRegressor(LogisticRegression, Model):
 
     def __init__(self):
         super().__init__()
-        LogisticRegression().__init__()
-        Model().__init__()
         self.type = "classification"
         self.name = "Logistic Regressor"
+        self._model = LogisticRegressor()
 
     def fit(self, train_x: np.ndarray, train_y: np.array,
             sample_weight=None) -> None:
-        LogisticRegression().fit(self, train_x, train_y, sample_weight)
+        self._model.fit(train_x, train_y, sample_weight)
 
     def predict(self, test_x: np.ndarray) -> float:
-        return LogisticRegression().predict(test_x)
+        return self._model.predict(test_x)

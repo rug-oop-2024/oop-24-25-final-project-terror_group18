@@ -9,10 +9,12 @@ class RidgeRegression(Model):
         super().__init__()
         self.type = "regression"
         self.name = "Ridge Regression"
-        self._ridge = Ridge()
+        self._model = Ridge()
 
     def fit(self, train_X: np.ndarray, train_y: np.ndarray) -> None:
-        self._ridge.fit(train_X, train_y)
+        self._model.fit(train_X, train_y)
+        self._parameters = self._model.get_params()
+
 
     def predict(self, test_X: np.ndarray) -> np.ndarray:
-        return self._ridge.predict(test_X)
+        return self._model.predict(test_X)

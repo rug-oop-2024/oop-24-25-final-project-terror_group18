@@ -7,13 +7,13 @@ from autoop.core.ml.model.base_model import Model
 class SupportVectorClassifier(SVC, Model):
 
     def __init__(self, kernel='linear'):
-        SVC().__init__(kernel=kernel)
-        Model().__init__()
+        super().__init__()
         self.type = "classification"
         self.name = "Support Vector Classifier"
+        self._model = SVC()
 
     def fit(self, train_x: np.ndarray, train_y: np.array, sample_weight=None) -> None:
-        super().fit(self, train_x, train_y)
+        self._model.fit(self, train_x, train_y)
 
     def predict(self, test_x: np.ndarray) -> float:
-        return super().predict(test_x)
+        return self._model.predict(test_x)
