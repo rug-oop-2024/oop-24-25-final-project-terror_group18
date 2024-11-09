@@ -165,8 +165,8 @@ class Precision(ConfusionMatrix):
         super().__init__()
         self.name = "Precision"
 
-    # @override
-    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    # @override CHANGED NAME!!! from evaluate to evaluate_precision...
+    def evaluate_precision(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
         return TP/(TP+FP)

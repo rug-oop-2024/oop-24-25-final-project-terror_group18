@@ -162,6 +162,8 @@ class PreprocessingHandler():
                 )
         return self._metric_choice is not None
     
+    
+    
 
     
     def run(self):
@@ -181,8 +183,9 @@ class PreprocessingHandler():
                 self._y_data = Dataset.from_dataframe(data=self._dataframe[self._selection_ground_truth],
                                         name="Ground Truth Data",
                                         asset_path="Ground Truth.csv")
-                split = st.slider("Select your train/test split",
-                                                  0, 100, value=80)                
+                data_split = st.slider("Select your train/test split",
+                                                  0, 100, value=80)      
+                data_split          
                 if self._select_model():
                     self._model = get_model(self._model_choice)
 
@@ -196,7 +199,7 @@ class PreprocessingHandler():
                                                   model=self._model,
                                                   input_features=detect_feature_types(self._X_data),
                                                   target_feature=detect_feature_types(self._y_data)[0],
-                                                  split=split)
+                                                  split=data_split)
 
 
                         if st.button("Save Pipeline"):
@@ -213,7 +216,10 @@ class PreprocessingHandler():
 
                         if st.button("Predict"):
                             st.divider()
-                            prediction_results = self._pipeline.execute()
+                            # prediction_results = self._pipeline.execute()
+
+
+
                             st.markdown("*Before you continue, these are your selections so far:*")
                             st.markdown(f"***Model:*** {self._model_choice}")
                             st.markdown(f"***Metrics:*** {self._metric_choice}")
