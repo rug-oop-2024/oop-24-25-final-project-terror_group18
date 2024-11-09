@@ -117,7 +117,7 @@ class PreprocessingHandler():
     def _select_model(self):
         types_options = {"categorial":["classification", CLASSIFICATION_MODELS],
                             "numerical":["regression", REGRESSION_MODELS]}
-        for i, feature_type in enumerate(detect_feature_types(self._dataframe[self._selection_ground_truth])):
+        for i, feature_type in enumerate(detect_feature_types(self._y_data)):
             self._feature_type = feature_type
             self._model_choice = st.selectbox(
                 f"Select your {types_options[feature_type][0]} model:",
@@ -152,10 +152,10 @@ class PreprocessingHandler():
             st.write(self._dataframe.head())
 
             if self._feature_selection():
-                X_data = Dataset.from_dataframe(data=self._dataframe[self._selection_observations],
+                self._X_data = Dataset.from_dataframe(data=self._dataframe[self._selection_observations],
                                         name="Observations Data",
                                         asset_path="Observations.csv")
-                y_data = Dataset.from_dataframe(data=self._dataframe[self._selection_ground_truth],
+                self._y_data = Dataset.from_dataframe(data=self._dataframe[self._selection_ground_truth],
                                         name="Ground Truth Data",
                                         asset_path="Ground Truth.csv")
                 split = st.slider("Select your train/test split",
