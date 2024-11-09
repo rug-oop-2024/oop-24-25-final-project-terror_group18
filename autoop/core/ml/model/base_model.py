@@ -30,7 +30,6 @@ class Model(ABC, MLType):
     def name(self, name: str) -> None:
         self._name = name
 
-
     @abstractmethod
     def fit(self, train_X: np.ndarray, train_y: np.ndarray) -> None:
         return None
@@ -40,12 +39,6 @@ class Model(ABC, MLType):
         return None
 
     def to_artifact(self, name: str) -> Artifact:
-        try:
-            return Artifact(name=name,
-                            asset_path=name,
-                            model=self._model,
-                            coeffs=self._model.coef_)
-        except AttributeError:
-            return Artifact(name=name,
-                            asset_path=name,
-                            model=self._model)
+        return Artifact(name=self.name,
+                        asset_path=name,
+                        type=self._type)

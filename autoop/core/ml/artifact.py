@@ -17,7 +17,7 @@ class Artifact():
     type: str
 
     def __init__(self, name: str,
-                 version: str = "NA",
+                 version: str = "1",
                  asset_path: str = "NA",
                  tags: list = [],
                  metadata: dict = {},
