@@ -15,9 +15,6 @@ def detect_feature_types(dataset: Dataset) -> list[Feature]:
     df = dataset.read()
     feature_list = []
     for column in df.columns:
-        '''if df.isnull().values.any():
-            df.dropna()
-            # message?'''
         feature = Feature(column)
         if is_numeric_dtype(df[column].dtype):
             feature.type = "numerical"
