@@ -34,7 +34,8 @@ class DataHandler:
                 self._file_path = self._file.name
                 self.df = pd.read_csv(self._file)
         else:
-            self._file = automl.registry.get(self._dataset_name_to_id[self._option])
+            self._dataset_id = self._dataset_name_to_id[self._option]
+            self._file = automl.registry.get(self._dataset_id)
             if self._file is not None:
                 self._file_path = self._file.asset_path
                 self.df = self._file.read()
@@ -46,6 +47,7 @@ class DataHandler:
             asset_path=self._file_path)
         st.session_state['dataframe'] = self.df
         st.session_state['df_dataset'] = self._df_dataset
+        st.session_state['dataset_id'] = self._dataset_id
 
     def _display(self):
         st.write(self.df.head())

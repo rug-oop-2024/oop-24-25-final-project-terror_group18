@@ -5,24 +5,25 @@ from pydantic import BaseModel, Field
 import base64
 
 
-class Artifact(BaseModel):
-    asset: dict = Field(default_factory=dict)
-    id: str = Field(default_factory=str)
-    data: bytes = Field(default_factory=bytes)
-    name: str = Field(default_factory=str)
-    version: str = Field(default_factory=str)
-    asset_path: str = Field(default_factory=str)
-    tags: list = Field(default_factory=list)
-    metadata: dict = Field(default_factory=dict)
-    type: str = Field(default_factory=str)
+class Artifact():
+    asset = {}
+    id: str
+    data: bytes
+    name: str
+    version: str
+    asset_path: str
+    tags: list
+    metadata: dict
+    type: str
 
     def __init__(self, name: str,
                  version: str = "NA",
                  asset_path: str = "NA",
                  tags: list = [],
                  metadata: dict = {},
-                 data: bytes = "NA",
-                 type: str = "NA", **kwargs):
+                 data: bytes = b"NA",
+                 type: str = "NA",
+                 **kwargs):
         super().__init__()
         encoded_id = base64.b64encode(
             asset_path.encode('utf-8')
@@ -30,6 +31,8 @@ class Artifact(BaseModel):
 
         self.id = f"{encoded_id}_{version}"
         #raise ValueError(f"id is {self.id}")
+        '''if not isinstance(data, bytes):
+            data = base64.b64encode(data)'''
         self.data = data
         self.name = name
         self.version = version
@@ -39,11 +42,11 @@ class Artifact(BaseModel):
         self.type = type
         self.asset["data"] = data
 
-        try:
-            for key, value in kwargs:
-                setattr(self, key, value)
-        except ValueError:
-            raise ValueError(f"kwargs are {kwargs}")
+        #try:
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        '''except ValueError:
+            raise ValueError(f"kwargs are {kwargs}")'''
 
 
     def read(self) -> pd.DataFrame:

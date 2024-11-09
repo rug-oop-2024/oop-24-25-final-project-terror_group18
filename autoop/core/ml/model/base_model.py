@@ -1,20 +1,19 @@
 from abc import abstractmethod, ABC
-
-from pydantic import Field
-
 from autoop.core.ml.artifact import Artifact
 from typing import Any
 import numpy as np
 from copy import deepcopy
 from typing import Literal, List
-
+import uuid
 from autoop.core.ml.ml_type import MLType
 
 
 class Model(ABC, MLType):
     _model = None
     _name: str = "model"
-    _parameters = None
+
+    def __init__(self):
+        self.id = str(uuid.uuid4())
 
     def __str__(self) -> str:
         return f"Model(type={self._type})"
@@ -31,9 +30,6 @@ class Model(ABC, MLType):
     def name(self, name: str) -> None:
         self._name = name
 
-    @property
-    def parameters(self) -> Any:
-        return deepcopy(self._parameters)
 
     @abstractmethod
     def fit(self, train_X: np.ndarray, train_y: np.ndarray) -> None:
@@ -44,8 +40,12 @@ class Model(ABC, MLType):
         return None
 
     def to_artifact(self, name: str) -> Artifact:
-        return Artifact(name=self.name,
-                        asset_path=self._type + '_' + self.name,
-                        type=self.type,
-                        parameters=self._parameters)
-
+        try:
+            return Artifact(name=name,
+                            asset_path=name,
+                            model=self._model,
+                            coeffs=self._model.coef_)
+        except AttributeError:
+            return Artifact(name=name,
+                            asset_path=name,
+                            model=self)

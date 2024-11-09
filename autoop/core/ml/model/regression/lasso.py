@@ -14,7 +14,7 @@ class LassoRegression(Lasso, Model):
 
     def fit(self, train_X: np.ndarray, train_y: np.ndarray, **kwargs) -> None:
         self._model.fit(self, train_X, train_y, kwargs)
-        self._parameters = self._model.get_params()
+        #self._model.coef_
 
     def predict(self, test_X: np.ndarray) -> np.ndarray:
         return self._model.predict(test_X)
