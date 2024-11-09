@@ -178,7 +178,7 @@ class PreprocessingHandler():
 
                         if st.button("Save Pipeline"):
                             self.save_pipeline()
-                            
+
                         pages = {
                             "Instructions": "./pages/0_✅_Instructions.py",
                             "Dataset": "./pages/1_📊_Datasets.py",
@@ -187,7 +187,7 @@ class PreprocessingHandler():
                         }
 
                         selected_page = "Predictions"
-                        
+
                         if st.button("Predict"):
                             st.divider()
                             prediction_results = self._pipeline.execute()
