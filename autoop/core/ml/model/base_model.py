@@ -12,9 +12,6 @@ class Model(ABC, MLType):
     _model = None
     _name: str = "model"
 
-    def __init__(self):
-        self.id = str(uuid.uuid4())
-
     def __str__(self) -> str:
         return f"Model(type={self._type})"
 

@@ -118,7 +118,7 @@ class PreprocessingHandler():
         return self._selection_observations
         
     def _select_model(self):
-        types_options = {"categorial":["classification", CLASSIFICATION_MODELS],
+        types_options = {"categorical":["classification", CLASSIFICATION_MODELS],
                         "numerical":["regression", REGRESSION_MODELS]}
         for i, feature_type in enumerate(detect_feature_types(self._y_data)):
             self._feature_type = feature_type.type
