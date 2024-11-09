@@ -4,7 +4,7 @@ import numpy as np
 from autoop.core.ml.model.base_model import Model
 
 
-class KNearestNeighbors(KNeighborsClassifier, Model):
+class KNearestNeighbors(Model):
 
     def __init__(self, n_neighbors=5):
         super().__init__()

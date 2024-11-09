@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from autoop.core.ml.model.base_model import Model
 
 
-class LogisticRegressor(LogisticRegression, Model):
+class LogisticRegressor(Model):
 
     def __init__(self):
         super().__init__()

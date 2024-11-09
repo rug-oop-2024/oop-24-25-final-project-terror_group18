@@ -4,7 +4,7 @@ import numpy as np
 from autoop.core.ml.model.base_model import Model
 
 
-class SupportVectorClassifier(SVC, Model):
+class SupportVectorClassifier(Model):
 
     def __init__(self, kernel='linear'):
         super().__init__()
