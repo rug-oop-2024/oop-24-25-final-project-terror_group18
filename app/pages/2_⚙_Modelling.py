@@ -66,6 +66,16 @@ class PreprocessingHandler():
             self._data_handler.save_in_registry(self._dataset)
         st.write("Pipeline saved.")
 
+    def _can_load_existing_pipelines(self):
+        if self.automl.registry.list(type="pipeline") is None:
+            return False
+        return True
+    
+    def load_pipeline(self):
+        self._pipeline = st.selectbox("Select your pipeline:", 
+                                      options=self.automl.registry.list(type="pipeline"), 
+                                      key="pipeline_select")
+
     def _feature_selection(self):
         self._selection_ground_truth = self._select_ground_truth()
         self._selection_observations = self._select_observations()
@@ -78,7 +88,10 @@ class PreprocessingHandler():
         # if 'dataframe' not in st.session_state.keys():
         #     st.write("Please upload your dataset in the \"Dataset\" page.")
         #     return False
-        if self._dataframe is None and 'dataframe' not in st.session_state.keys():
+        if self._dataframe is None:
+            st.write("Please upload your dataset in the \"Dataset\" page.")
+            return False
+        if 'dataframe' not in st.session_state.keys():
             st.write("Please upload your dataset in the \"Dataset\" page.")
             return False
         return True
@@ -149,11 +162,17 @@ class PreprocessingHandler():
                 )
         return self._metric_choice is not None
     
+
+    
     def run(self):
         if self.dataset_is_uploaded:
             self._dataframe = self._data_handler.df
             self._dataset = self._data_handler.dataset
             st.write(self._dataframe.head())
+
+            if self._can_load_existing_pipelines():
+                if st.button("Load Pipeline"):
+                    self.load_pipeline()
 
             if self._feature_selection():
                 self._X_data = Dataset.from_dataframe(data=self._dataframe[self._selection_observations],
@@ -474,5 +493,6 @@ class PreprocessingHandler():
 if "data_handler" not in st.session_state:
     st.write("Please upload your dataset in the \"Dataset\" page.")
 else:
-    modelling = PreprocessingHandler(st.session_state)
-    modelling.run()
+    if st.session_state['data_handler'].df is not None:
+        modelling = PreprocessingHandler(st.session_state)
+        modelling.run()
