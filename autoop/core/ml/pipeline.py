@@ -69,7 +69,7 @@ Pipeline(
             "split": self._split,
         }
         artifacts.append(Artifact(name="pipeline_config", data=pickle.dumps(pipeline_data)))
-        artifacts.append(self.model.to_artifact(name=f"pipeline_model_{self.model._type}"))
+        artifacts.append(self._model.to_artifact(name=f"pipeline_model_{self._model._type}"))
         return artifacts
     
     def _register_artifact(self, name: str, artifact):
