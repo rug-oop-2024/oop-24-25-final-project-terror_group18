@@ -1,8 +1,8 @@
 import streamlit as st
-# import pandas as pd
-# from autoop.core.ml.dataset import Dataset
-# # from autoop.core.ml.model.regression import RidgeRegression
-# from sklearn.model_selection import train_test_split
+import pandas as pd
+from autoop.core.ml.dataset import Dataset
+# from autoop.core.ml.model.regression import RidgeRegression
+from sklearn.model_selection import train_test_split
 
 
 # st.set_page_config(page_title="Modelling", page_icon="📈")
@@ -54,33 +54,33 @@ import streamlit as st
 # #     st.switch_page(page_file):
 # #     # ????st.write(f"You are now on page: {selected_page}")
 
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import load_iris
-import shap
-import matplotlib.pyplot as plt
-# THIS EXAMPLE HAS ERRORS BUT IT IS AN IDEA
-# Load a dataset and split into train/test sets
-data = load_iris()
-X, y = data.data, data.target
-feature_names = data.feature_names
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# from sklearn.model_selection import train_test_split
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.datasets import load_iris
+# import shap
+# import matplotlib.pyplot as plt
+# # THIS EXAMPLE HAS ERRORS BUT IT IS AN IDEA
+# # Load a dataset and split into train/test sets
+# data = load_iris()
+# X, y = data.data, data.target
+# feature_names = data.feature_names
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train a Random Forest model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
+# # Train a Random Forest model
+# model = RandomForestClassifier(n_estimators=100, random_state=42)
+# model.fit(X_train, y_train)
 
-# Create a SHAP explainer for the trained model
-explainer = shap.TreeExplainer(model)
+# # Create a SHAP explainer for the trained model
+# explainer = shap.TreeExplainer(model)
 
-# Calculate SHAP values for the test set
-shap_values = explainer.shap_values(X_test)
+# # Calculate SHAP values for the test set
+# shap_values = explainer.shap_values(X_test)
 
-# Summary plot for global feature importance
-shap.summary_plot(shap_values, X_test, feature_names=feature_names)
-plt.show()  # Optionally, add plt.show() to ensure the plot displays in certain environments
+# # Summary plot for global feature importance
+# shap.summary_plot(shap_values, X_test, feature_names=feature_names)
+# plt.show()  # Optionally, add plt.show() to ensure the plot displays in certain environments
 
 
-# Force plot for the first prediction in the test set (individual prediction explanation)
-shap.initjs()
-shap.force_plot(explainer.expected_value[0], shap_values[0][0], feature_names=feature_names)
+# # Force plot for the first prediction in the test set (individual prediction explanation)
+# shap.initjs()
+# shap.force_plot(explainer.expected_value[0], shap_values[0][0], feature_names=feature_names)

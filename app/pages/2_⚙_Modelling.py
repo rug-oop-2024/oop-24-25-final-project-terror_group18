@@ -67,8 +67,15 @@ def handle_duplicate_features(selection_ground_truth, selection_observations):
     return selection_observations
 
 
+def check_is_none(obj):
+    if obj is None:
+        return True
+    return False
+
 def check_is_empty(lst):
-    pass
+    if len(lst) == 0:
+        return True
+    return False
 
 
 def split_data():
@@ -101,7 +108,7 @@ else:
     st.divider()
     st.markdown("*Before you continue, these are your selections so far:*")
     # Y DATA
-    if selection_ground_truth is None:
+    if check_is_none(selection_ground_truth):
         st.markdown('''
         :red[**Please select something as your ground truth!**]''')
     else:
@@ -113,7 +120,7 @@ else:
         st.write(dataframe[selection_ground_truth].head())
 
     # X DATA
-    if len(selection_observations) == 0:
+    if check_is_empty(selection_observations):
         st.markdown('''
         :red[**Please select at least one column as your observations!**]''')
     else:
@@ -131,7 +138,7 @@ else:
     data_split /= 100
 
     st.divider()
-    if selection_ground_truth is not None:
+    if not check_is_none(selection_ground_truth) and not check_is_empty(selection_observations):
         model_choice = None
         metric_choice = None
         # feature = detect_feature_types(Y_data)
@@ -216,7 +223,7 @@ else:
                 desired_metrics.append(get_metric(metric))
 
             if model_choice is not None:
-                if metric_choice is not None:
+                if len(desired_metrics) != 0:
                     predict_button = True
                     pipeline = Pipeline(model=model.name,
                                         dataset=st.session_state['dataset_id'],
@@ -237,13 +244,23 @@ else:
         st.write("Hi")
         st.write("Hi")
 
+    pages = {
+            "Instructions": "./pages/0_✅_Instructions.py",
+            "Dataset": "./pages/1_📊_Datasets.py",
+            "Modelling": "./pages/2_⚙_Modelling.py",
+            "Predictions": "./pages/3_Predictions.py"
+        }
+    
+    selected_page = "Predictions"
 
     if predict_button:
         st.divider()
         st.markdown("*Before you continue, these are your selections so far:*")
         st.markdown(f"***Model:*** {model_choice}")
         st.markdown(f"***Metrics:*** {metric_choice}")
-        st.button("Predict", on_click=printtt)
+        if st.button("Predict", on_click=printtt):
+            page_file = pages[selected_page]
+            st.switch_page(page_file)
         #if st.button("Predict", on_click=printtt):
             # st.switch_page("Predictions")
             #model.fit(X_data, Y_data)... train/test
@@ -256,12 +273,7 @@ else:
     # X_train, X_test, y_train, y_test = train_test_split(
     #     X, y, test_size=(100 - data_split)/100)
 
-    # pages = {
-    #     "Instructions": "./pages/0_✅_Instructions.py",
-    #     "Dataset": "./pages/1_📊_Datasets.py",
-    #     "Modelling": "./pages/2_⚙_Modelling.py",
-    #     "Predictions": "./pages/3_Predictions.py"
-    # }
+   
     # selected_page = "Dataset"
     # # Button to switch page
     # switch_page = st.button("Switch page")
