@@ -190,10 +190,12 @@ class PreprocessingHandler():
                                                       name="Ground Truth Data",
                                                       asset_path="Ground Truth.csv")
                 data_split = st.slider("Select your train/test split",
-                                       0, 100, value=80)/100
+                                       0, 100, value=80)
 
                 if self._select_model():
                     self._model = get_model(self._model_choice)
+                    st.write(self._model)
+                    st.write(type(self._model))
 
                     if self._select_metrics():
                         st.markdown("*Before you continue, these are your selections so far:*")
@@ -224,10 +226,9 @@ class PreprocessingHandler():
                             selected_page = "Predictions"
 
                             st.divider()
-                            prediction_results = self._pipeline.execute()
-
-
-
+                            # prediction_results = self._pipeline.execute()
+                            # st.session_state["pipeline_results"] = prediction_results
+                            # st.write(prediction_results)
 
                             # if st.button("Predict"):
                             #     st.session_state["prediction_results"] = prediction_results
@@ -235,23 +236,31 @@ class PreprocessingHandler():
                             #     st.switch_page(page_file)
 
 
-'''                         data_x = np.asarray(self._dataframe[self._selection_observations])
+                            data_x = np.asarray(self._dataframe[self._selection_observations])
                             data_y = np.asarray([self._dataframe[self._selection_ground_truth]]).transpose()
-                            train_x,train_y,test_x,test_y = train_test_split(data_x, data_y,
+                            train_x,test_x,train_y,test_y = train_test_split(data_x, data_y,
                                                                               train_size=data_split/100,
                                                                               shuffle=False)
+                            
+                            st.write("Shape of train_x:", train_x.shape)
+                            st.write("Shape of train_y:", train_y.shape)
+                            # st.write(test_x)
+                            st.write(type(self._model))
                             self._model.fit(train_x, train_y)
                             y_pred = self._model.predict(test_x)
-                            metric_results = []
-                            for metric in self._desired_metrics:
-                                metric_results.append({metric.name : metric.evaluate(test_y, y_pred)})
+                            # metric_results = []
+                            # for metric in self._desired_metrics:
+                            #     metric_results.append({metric.name : metric.evaluate(test_y, y_pred)})
 
                             st.write("Predictions:")
-                            st.write(pd.DataFrame(y_pred).head())
-                            st.write("Metrics")
-                            for metric, result in metric_results:
-                                st.markdown(f"{metric}: {result}")
-'''
+                            st.write(y_pred)
+                            # st.write(pd.DataFrame(y_pred).head())
+
+
+                            # st.write("Metrics")
+                            # for metric, result in metric_results:
+                            #     st.markdown(f"{metric}: {result}")
+
 
 
 # def dataset_is_uploaded():

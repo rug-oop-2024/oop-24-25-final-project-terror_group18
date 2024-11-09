@@ -120,6 +120,8 @@ Pipeline(
         self._preprocess_features()
         self._split_data()
         self._train()
+        X = self._compact_vectors(self._test_X)
+        self._predictions = self._model.predict(X)
         return self._predictions
         # self._evaluate()
         # return {
