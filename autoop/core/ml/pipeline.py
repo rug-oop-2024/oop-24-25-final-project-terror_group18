@@ -28,10 +28,11 @@ class Pipeline():
         self._metrics = metrics
         self._artifacts = {}
         self._split = split
-        if target_feature.type == "categorical" and model._type != "classification":
-            raise ValueError("Model type must be classification for categorical target feature")
-        if target_feature.type == "continuous" and model._type != "regression":
-            raise ValueError("Model type must be regression for continuous target feature")
+        if self._model is not None:
+            if target_feature.type == "categorical" and model._type != "classification":
+                raise ValueError("Model type must be classification for categorical target feature")
+            if target_feature.type == "continuous" and model._type != "regression":
+                raise ValueError("Model type must be regression for continuous target feature")
 
     def __str__(self):
         return f"""
