@@ -8,6 +8,7 @@ from autoop.core.ml.feature import Feature
 from autoop.core.ml.metric import Metric
 from autoop.functional.preprocessing import preprocess_features
 import numpy as np
+import streamlit as st
 
 
 class Pipeline():
@@ -44,7 +45,7 @@ Pipeline(
 """
 
     @property
-    def model(self):
+    def model(self) -> Model:
         return self._model
 
     @property
