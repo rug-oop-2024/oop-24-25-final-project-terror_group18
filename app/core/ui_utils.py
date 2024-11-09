@@ -17,6 +17,7 @@ class DataHandler:
         self._option = None
         self._file_path = None
         self._file = None
+        self._dataset = None
 
     def _choose_file(self):
         self._option = st.selectbox("Choose Dataset", self._options)
@@ -53,10 +54,13 @@ class DataHandler:
 
     @staticmethod
     def save_in_registry(dataset: Dataset) -> bool:
-        if dataset.asset_path not in [x.asset_path for x in datasets]:
-            automl.registry.register(dataset)
-            return True
-        return False
+        try:
+            if dataset.asset_path not in [x.asset_path for x in datasets]:
+                automl.registry.register(dataset)
+                return True
+            return False
+        except AttributeError:
+            raise AttributeError(f"dataset is {dataset}")
 
     def run(self):
         self._choose_file()
