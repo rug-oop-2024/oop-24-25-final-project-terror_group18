@@ -4,7 +4,7 @@ from autoop.core.ml.model.base_model import Model
 
 
 
-class LassoRegression(Lasso, Model):
+class LassoRegression(Model):
 
     def __init__(self, alpha=0.1):
         super().__init__()

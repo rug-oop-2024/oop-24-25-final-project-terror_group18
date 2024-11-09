@@ -10,7 +10,7 @@ class LogisticRegressor(Model):
         super().__init__()
         self.type = "classification"
         self.name = "Logistic Regressor"
-        self._model = LogisticRegressor()
+        self._model = LogisticRegression()
 
     def fit(self, train_x: np.ndarray, train_y: np.array,
             sample_weight=None) -> None:
