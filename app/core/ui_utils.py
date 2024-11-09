@@ -6,13 +6,12 @@ import streamlit as st
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
 
+
 automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
 
-
 class DataHandler:
-
-    def __init__(self):
+    def __init__(self, datasets=datasets):
         self.df = None
         self._dataset_name_to_id = {dt.name: dt.id for dt in datasets}
         self._options = ["UPLOAD"] + list(self._dataset_name_to_id.keys())
