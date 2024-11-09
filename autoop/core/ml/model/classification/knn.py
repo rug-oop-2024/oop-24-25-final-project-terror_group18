@@ -10,7 +10,7 @@ class KNearestNeighbors(Model):
         super().__init__()
         self.type = "classification"
         self.name = "KNN"
-        self._model = KNearestNeighbors(n_neighbors=n_neighbors)
+        self._model = KNeighborsClassifier(n_neighbors=n_neighbors)
 
 
     def fit(self, train_x: np.ndarray, train_y: np.ndarray) -> None:
