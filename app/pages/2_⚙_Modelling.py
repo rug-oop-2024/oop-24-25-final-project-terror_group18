@@ -236,16 +236,13 @@ class PreprocessingHandler():
                                 else:
                                     data_x = np.concatenate(
                                         [data_x, item[1]], axis=1)
-                            st.write("dataX is")
-                            st.write(data_x[:5])
                             prep_y = preprocess_features(
                                 [self._pipeline.target_feature],
                                 self._dataset)
-                            st.write(prep_y)
+                            # st.write(prep_y)
+
                             data_y = np.asarray(self._dataframe[
                                 self._selection_ground_truth])
-                            st.write("dataY is")
-                            st.write(data_y[:5])
 
                             train_x, test_x, train_y, tes_y = train_test_split(
                                 data_x, data_y, train_size=data_split / 100,
