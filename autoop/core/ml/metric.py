@@ -9,7 +9,7 @@ METRICS_CLASSIFICATION = [
     "Precision",
     "Recall",
     "Confusion Matrix"
-]
+]  
 
 METRICS_REGRESSION = [
     "Mean Squared Error",
