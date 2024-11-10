@@ -6,19 +6,22 @@ from autoop.core.ml.dataset import Dataset
 
 automl = AutoMLSystem.get_instance()
 datasets = automl.registry.list(type="dataset")
+
 df_students = pd.read_csv("app/data/Students Performance.csv")
 dt_students = Dataset.from_dataframe(
-    data=df_students, name="Students Performance", 
-    asset_path="app/data/Students Performance.csv")
-automl.registry.register(dt_students)
-df_gym = pd.read_csv("app/data/Students Performance.csv")
-dt_gym = Dataset.from_dataframe(
-    data=df_students, name="Students Performance", 
+    data=df_students, name="Students Performance",
     asset_path="app/data/Students Performance.csv")
 automl.registry.register(dt_students)
 
-datasets_dictionary = {dt_students.name: dt_students.id}
-datasets_id_list = [dt_students.id]
+df_gym = pd.read_csv("app/data/Gym Members Exercise Tracking.csv")
+dt_gym = Dataset.from_dataframe(
+    data=df_gym, name="Gym Members Exercise Tracking",
+    asset_path="app/data/Gym Members Exercise Tracking.csv")
+automl.registry.register(dt_gym)
+
+datasets_dictionary = {dt_students.name: dt_students.id,
+                       dt_gym.name: dt_gym.id}
+datasets_names_list = [dt_students.name, dt_gym.name]
 
 
 class DataHandler:
@@ -33,7 +36,7 @@ class DataHandler:
         self.df = None
         self._dataset_name_to_id = {dt.name: dt.id for dt in datasets}
         self._options = ["UPLOAD"] + list(
-            self._dataset_name_to_id.keys()) + datasets_id_list
+            self._dataset_name_to_id.keys()) + datasets_names_list
         self._option = None
         self._file_path = None
         self._file = None
@@ -52,8 +55,12 @@ class DataHandler:
             if self._file is not None:
                 self._file_path = self._file.name
                 self.df = pd.read_csv(self._file)
-        elif self._option in datasets_id_list:
+        elif self._option in datasets_names_list:
             self._dataset_id = datasets_dictionary[self._option]
+            self._file = automl.registry.get(self._dataset_id)
+            if self._file is not None:
+                self._file_path = self._file.asset_path
+                self.df = self._file.read()
         else:
             self._dataset_id = self._dataset_name_to_id[self._option]
             self._file = automl.registry.get(self._dataset_id)
