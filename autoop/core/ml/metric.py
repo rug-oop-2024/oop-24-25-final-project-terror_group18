@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from typing import Any, Callable
+from typing import Any
 import numpy as np
-import pandas as pd
-from overrides import override
-
 from autoop.core.ml.ml_type import MLType
 
 METRICS_CLASSIFICATION = [
@@ -20,9 +17,12 @@ METRICS_REGRESSION = [
 ]
 
 
-# https://neptune.ai/blog/performance-metrics-in-machine-learning-complete-guide
-
-def get_metric(metric_name: str):
+def get_metric(metric_name: str) -> 'Metric':
+    """
+    The method that returns a metric instance based on its name.
+    :param metric_name: str
+    :return: Metric
+    """
     if metric_name == "Mean Squared Error":
         return MeanSquaredError()
     elif metric_name == "Root Mean Squared Error":
@@ -35,75 +35,125 @@ def get_metric(metric_name: str):
         return Recall()
     elif metric_name == "Confusion Matrix":
         return ConfusionMatrix()
-    
-    # Factory function to get a metric by name.
-    # Return a metric instance given its str name.
-    # for metric in Metric.metrics:
-    #     if metric.name == name:
-    #         return metric
-    # return None
 
 
 class Metric(ABC, MLType):
     """
     Base class for all metrics.
     """
-    # remember: metrics take ground truth and prediction as input and return a real number
     _metrics: list = []
     _name: str
 
     def __init__(self) -> None:
+        """
+        The constructor for the Metric class.
+        :return: None
+        """
         self._metrics.append(self)
 
-    def __call__(self, y_true, y_pred) -> Any:
+    def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> Any:
+        """
+        The call method for the Metric class.
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: Any
+        """
         return self.evaluate(y_true, y_pred)
 
     @property
     def name(self) -> str:
+        """
+        The getter method for the name of the metric.
+        :return: str
+        """
         return self._name
 
     @name.setter
     def name(self, name: str) -> None:
+        """
+        The setter method for the name of the metric.
+        :param name: str
+        :return: None
+        """
         self._name = name
 
     @property
     def metrics(self) -> list:
+        """
+        The getter method for the metrics.
+        :return: list
+        """
         return deepcopy(self._metrics)
 
     @abstractmethod
-    def evaluate(self, y_true, y_pred) -> Any:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> Any:
+        """
+        The abstract method for the evaluate method.
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: Any"""
         pass
 
 
-# add here concrete implementations of the Metric class
-
 class MeanSquaredError(Metric):
-
-    def __init__(self):
+    """
+    The Mean Squared Error metric class.
+    """
+    def __init__(self) -> None:
+        """
+        The constructor for the Mean Squared Error metric class.
+        :return: None
+        """
         super().__init__()
         self.type = "regression"
         self.name = "Mean Squared Error"
 
-    # @override
+    #@override
     def evaluate(self, y_true: Any, y_pred: Any) -> float:
+        """
+        The evaluate method for the Mean Squared Error metric class.
+        :param y_true: Any
+        :param y_pred: Any
+        :return: float
+        """
+        #Y_true is any / not np.ndarray???
         mse = (y_true - y_pred) ** 2
         return mse.mean()
 
 
 class ConfusionMatrix(Metric):
-
-    def __init__(self):
+    """
+    The Confusion Matrix metric class.
+    """
+    def __init__(self) -> None:
+        """
+        The constructor for the Confusion Matrix metric class.
+        :return: None
+        """
         super().__init__()
         self.type = "classification"
         self._matrix = None
         self.name = "Confusion Matrix"
 
     def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
+        #docstring???
+        """
+        # Theis method checks if the matrix is already created.
+        # :param y_true: np.ndarray
+        # :param y_pred: np.ndarray
+        # :return: None
+        """
+
         if self._matrix is None:
             self.evaluate(y_true, y_pred)
 
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
-        # counts the number of true positives (y = y_pred)
+        """
+        This method counts the number of true positives.
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: int
+        """
         self._check_matrix(y_true, y_pred)
         true_positives = []
         for i in range(self._matrix):
@@ -139,6 +189,7 @@ class ConfusionMatrix(Metric):
 
     # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+
         keys = list(dict.fromkeys(y_pred))
         n = len(keys)
         matrix = np.zeros((n, n))
