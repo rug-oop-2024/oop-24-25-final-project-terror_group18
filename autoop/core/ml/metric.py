@@ -142,12 +142,27 @@ class ConfusionMatrix(Metric):
         :param y_pred: observations
         :return: ndarray representing the matrix
         """
-        keys = list(dict.fromkeys(y_pred))
+
+            # Flatten y_true and y_pred if they are multidimensional
+        y_true = y_true.ravel() if y_true.ndim > 1 else y_true
+        y_pred = y_pred.ravel() if y_pred.ndim > 1 else y_pred
+
+        # keys = list(set(y_pred))  # Use set instead of dict.fromkeys for unique items
+        keys = list(set(y_true).union(set(y_pred)))
         n = len(keys)
-        matrix = np.zeros((n, n))
-        for pdata, tdata in y_pred, y_true:
+        matrix = np.zeros((n, n), dtype=int)
+
+        for pdata, tdata in zip(y_pred, y_true):  # Iterate over pairs of predictions and true values
             matrix[keys.index(pdata)][keys.index(tdata)] += 1
+
+        self._matrix = matrix  # Store the matrix in the instance for later use
         return matrix
+        # keys = list(dict.fromkeys(y_pred))
+        # n = len(keys)
+        # matrix = np.zeros((n, n))
+        # for pdata, tdata in zip(y_pred, y_true):
+        #     matrix[keys.index(pdata)][keys.index(tdata)] += 1
+        # return matrix
 
     def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
         """
@@ -168,16 +183,20 @@ class ConfusionMatrix(Metric):
         """
         self._check_matrix(y_true, y_pred)
         true_positives = []
-        for i in range(self._matrix):
+
+        
+        for i in range(self._matrix.shape[0]): 
+        #for i in range(self._matrix):
             true_positives.append(self._matrix[i][i])
-        return np.mean(true_positives)
+        return np.mean(true_positives) #sum or mean??
 
     def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
         # return np.sum((y_true == 1) & (y_pred == 0))
         self._check_matrix(y_true, y_pred)
         false_negatives = []
-        for i in range(self._matrix):
+        # for i in range(self._matrix):
+        for i in range(self._matrix.shape[0]):
             sum = 0
             for j in range(self._matrix[i]):
                 sum += self._matrix[i][j]
@@ -199,7 +218,7 @@ class ConfusionMatrix(Metric):
                                  self.find_FP(y_true, y_pred) +
                                  self.find_TP(y_true, y_pred))
 
-    # @override
+    #@override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
         """
         Evaluates confusion matrix
