@@ -30,7 +30,7 @@ class Dataset(Artifact):
             name=name,
             asset_path=asset_path,
             data=data.to_csv(index=False).encode(),
-            version=version,
+            version=version
         )
 
     def read(self) -> pd.DataFrame:

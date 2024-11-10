@@ -56,6 +56,7 @@ class Artifact():
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+
     def read(self) -> pd.DataFrame:
         """
         Read artifact data as a dataframe.

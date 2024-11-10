@@ -74,4 +74,4 @@ class Model(ABC, MLType):
         """
         return Artifact(name=self.name,
                         asset_path=name,
-                        type=self._type)
+                        type="model")

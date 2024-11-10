@@ -62,25 +62,29 @@ class PreprocessingHandler():
         return selection_observations
 
     def save_pipeline(self):
-        for artifact in self._pipeline.artifacts:
-            self.automl.registry.register(artifact)
-            self._data_handler.save_in_registry(self._dataset)
+        # for artifact in self._pipeline.artifacts:
+        self.automl.registry.register(self._pipeline)
+        self._data_handler.save_in_registry(self._dataset)
         st.write("Pipeline saved.")
 
     def _can_load_existing_pipelines(self):
-        if self.automl.registry.list(type="pipeline") is None:
-            return False
-        return True
+        pipe1 = self.automl.registry.list(type="pipeline")[0]
+        st.write(pipe1.id, pipe1.name, pipe1.asset_path)
+        st.write(pipe1.data)
+        return len(self.automl.registry.list(type="pipeline")) > 0
 
     def load_pipeline(self):
-        self._pipeline = st.selectbox("Select your pipeline:",
-                                      options=self.automl.registry.list(
-                                          type="pipeline"),
-                                      key="pipeline_select")
+        pipelines = self.automl.registry.list(type="pipeline")
+        pipe_name_to_id = {p.name: p.id for p in pipelines}
+        pipeline_name = st.selectbox("Select your pipeline:",
+                                     options=pipe_name_to_id.keys(),
+                                     key="pipeline_select")
+        pipe_art = automl.registry.get(pipe_name_to_id[pipeline_name])
+        self._pipeline = Pipeline.from_artifact(pipe_art, automl)
 
-    def _feature_selection(self):
-        self._selection_ground_truth = self._select_ground_truth()
-        self._selection_observations = self._select_observations()
+    def _feature_selection(self, default_gt, default_obs):
+        self._selection_ground_truth = self._select_ground_truth(default_gt)
+        self._selection_observations = self._select_observations(default_obs)
         self._handle_duplicate_features()
         # st.write(':red[WARNING: All rows with NaN values will be dropped.]')
         # self._dataframe.dropna(subset=self._selection_observations, inplace=True)
@@ -94,21 +98,24 @@ class PreprocessingHandler():
             return False
         return True
 
-    def _select_ground_truth(self):
+    def _select_ground_truth(self, default=None):
+        idx = 0
+        if default is not None:
+            idx = self._dataframe.columns.get_loc(default)
         selection_ground_truth = st.selectbox(
             "Select the column with the data you want to predict:",
             options=self._dataframe.columns,
             placeholder="Select your ground truth...",
-            index=None,
-            key="select_ground_truth",
+            index=int(idx),
+            key="select_ground_truth"
         )
         return selection_ground_truth
 
-    def _select_observations(self):
+    def _select_observations(self, default=None):
         selection_observations = st.multiselect(
             "Select your observations columns:",
             options=self._dataframe.columns,
-            default=None,
+            default=default,
             placeholder="Select one or more columns...",
             key="multiselect_observations"
         )
@@ -183,7 +190,12 @@ class PreprocessingHandler():
                 if st.button("Load Pipeline"):
                     self.load_pipeline()
 
-            if self._feature_selection():
+            defaultY = None
+            defaultX = None
+            if self._pipeline is not None:
+                defaultY = self._pipeline.target_feature.name
+                defaultX = [f.name for f in self._pipeline.input_features]
+            if self._feature_selection(defaultY, defaultX):
                 self._X_data = Dataset.from_dataframe(
                     data=self._dataframe[self._selection_observations],
                     name="Observations Data",
@@ -224,8 +236,11 @@ class PreprocessingHandler():
                             model=self._model,
                             input_features=detect_feature_types(self._X_data),
                             target_feature=detect_feature_types(self._y_data)[0],
-                            split=data_split)
-
+                            split=data_split
+                        )
+                        name = st.text_input("Give your pipeline a name :) ")
+                        if name != '':
+                            self._pipeline.name = name
                         if st.button("Save Pipeline"):
                             self.save_pipeline()
 
@@ -253,36 +268,35 @@ class PreprocessingHandler():
                             #     self._dataframe[self._selection_observations])
                             # data_y = np.asarray(
                             #     [self._dataframe[self._selection_ground_truth]]).transpose()
-                            
 
                             prep_x = preprocess_features(self._pipeline.input_features, self._dataset)
                             data_x = None
                             for item in prep_x:
-                                #st.write(item[1])
+                                # st.write(item[1])
                                 if data_x is None:
                                     data_x = item[1]
                                 else:
                                     data_x = np.concatenate([data_x, item[1]], axis=1)
                             st.write(f"dataX is")
                             st.write(data_x[:5])
-                                # for i in range(len(item[1])):
-                                #     st.write(item[1][i])
-                                #     data_x[i].append(item[1][i])
-                            #data_x = np.concatenate([x[1] for x in prep_x], axis=1)
+                            # for i in range(len(item[1])):
+                            #     st.write(item[1][i])
+                            #     data_x[i].append(item[1][i])
+                            # data_x = np.concatenate([x[1] for x in prep_x], axis=1)
                             # [x[1] if x[2]['type'] != 'OneHotEncoder' else np.array([x[1]]) for x in prep_x]
                             # data_x = np.asarray(data_x)
-                            #st.write(data_x)
+                            # st.write(data_x)
 
                             prep_y = preprocess_features([self._pipeline.target_feature],
                                                          self._dataset)
                             st.write(prep_y)
-                            #st.write(item for item in prep_y)
+                            # st.write(item for item in prep_y)
                             data_y = np.asarray(self._dataframe[self._selection_ground_truth])  # prep_y[0][1]
                             st.write(f"dataY is")
                             st.write(data_y[:5])
 
                             train_x, test_x, train_y, test_y = train_test_split(
-                                data_x, data_y, train_size=data_split / 100,
+                                data_x, data_y, train_size=data_split,
                                 shuffle=False)
 
                             # st.write("Shape of train_x:", train_x.shape)
@@ -306,7 +320,7 @@ class PreprocessingHandler():
                             observations_columns_count = len(
                                 self._selection_observations)
                             if (self._model.type == "regression"
-                               and observations_columns_count == 1):
+                                    and observations_columns_count == 1):
                                 plt.figure(figsize=(10, 6))
                                 plt.scatter(test_x, test_y, color='blue',
                                             label='Actual Test Data')
@@ -326,7 +340,8 @@ class PreprocessingHandler():
 
                                 # Loop over each unique class to plot with a different color
                                 for class_value in unique_classes:
-                                    class_indices = (test_y == class_value).ravel()  # Indices of samples belonging to the current class
+                                    class_indices = (
+                                                test_y == class_value).ravel()  # Indices of samples belonging to the current class
                                     plt.scatter(
                                         test_x[class_indices, 0], test_x[class_indices, 1],
                                         label=f"Class {class_value}", s=40, edgecolor='k'
@@ -351,9 +366,6 @@ class PreprocessingHandler():
                             # plt.scatter(test_x, y_pred)
                             # st.pyplot(plt.gcf())
 
-
-
-
                             # slope, intercept, r, p, std_err = stats.linregress(test_x, test_y)
 
                             # def myfunc(x):
@@ -364,7 +376,6 @@ class PreprocessingHandler():
                             # plt.scatter(test_x, test_y)
                             # plt.plot(test_x, mymodel)
                             # # st.write(pd.DataFrame(y_pred).head())
-
 
                             st.header("**Metrics**")
                             # for metric, result in metric_results:
@@ -379,8 +390,7 @@ class PreprocessingHandler():
                                         st.pyplot(plt.gcf())
                                     else:
                                         st.markdown(f"**{metric}:** {result}")
-                                    
-                                    
+
 
 if "data_handler" not in st.session_state:
     st.write("Please upload your dataset in the \"Dataset\" page.")
