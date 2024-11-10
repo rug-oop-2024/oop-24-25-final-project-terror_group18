@@ -121,8 +121,9 @@ class PreprocessingHandler():
         self._selection_ground_truth = self._select_ground_truth(default_gt)
         self._selection_observations = self._select_observations(default_obs)
         self._handle_duplicate_features()
-        return (len(self._selection_observations) != 0
-                and self._selection_ground_truth is not None)
+        return (len(
+            self._selection_observations) != 0 and (
+                self._selection_ground_truth is not None))
 
     def dataset_is_uploaded(self) -> bool:
         """
