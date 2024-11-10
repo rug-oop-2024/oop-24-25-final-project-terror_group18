@@ -11,7 +11,7 @@ from autoop.core.ml.metric import get_metric
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn import metrics
-from typing import Tuple
+from typing import List
 
 from autoop.functional.preprocessing import preprocess_features
 
@@ -228,7 +228,7 @@ class PreprocessingHandler():
             return False
         return True
 
-    def validate_data(self) -> 'Tuple'[np.ndarray, np.ndarray]:
+    def validate_data(self) -> 'List'[np.ndarray, np.ndarray]:
         """
         A method to validate the data.
         :return: Tuple[np.ndarray, np.ndarray]
