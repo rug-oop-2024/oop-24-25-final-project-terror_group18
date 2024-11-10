@@ -272,7 +272,10 @@ class PreprocessingHandler():
                             st.write(y_pred)
 
                             st.write(self._model.type)
-                            if self._model.type == "regression":
+                            observations_columns_count = len(
+                                self._selection_observations)
+                            if (self._model.type == "regression"
+                               and observations_columns_count == 1):
                                 plt.figure(figsize=(10, 6))
                                 plt.scatter(test_x, test_y, color='blue',
                                             label='Actual Test Data')
@@ -285,6 +288,34 @@ class PreprocessingHandler():
                                           "Prediction Line of Best Fit")
                                 plt.legend()
                                 st.pyplot(plt.gcf())
+                            elif (self._model.type == "classification"
+                                  and observations_columns_count == 2):
+                                plt.figure(figsize=(10, 6))
+                                unique_classes = np.unique(test_y)  # Get unique classes from test_y
+
+                                # Loop over each unique class to plot with a different color
+                                for class_value in unique_classes:
+                                    class_indices = (test_y == class_value).ravel()  # Indices of samples belonging to the current class
+                                    plt.scatter(
+                                        test_x[class_indices, 0], test_x[class_indices, 1],
+                                        label=f"Class {class_value}", s=40, edgecolor='k'
+                                    )
+
+                                plt.xlabel("Feature 1")
+                                plt.ylabel("Feature 2")
+                                plt.title("2D Scatter Plot of Classification Data")
+                                plt.legend()
+                                st.pyplot(plt.gcf())
+                            else:
+                                fig, axes = plt.subplots(
+                                    nrows=1, ncols=observations_columns_count,
+                                    figsize=(15, 5))
+                                for i in range(observations_columns_count):
+                                    axes[i].hist(
+                                        test_x[:, i], bins=15, alpha=0.7)
+                                    axes[i].set_title(f"Feature {i+1}")
+                                plt.suptitle("Distribution of Each Feature")
+                                st.pyplot(fig)
                             # plt.scatter(test_x, y_pred)
                             # st.pyplot(plt.gcf())
 
