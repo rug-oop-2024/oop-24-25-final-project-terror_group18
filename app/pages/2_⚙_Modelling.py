@@ -62,15 +62,11 @@ class PreprocessingHandler():
         return selection_observations
 
     def save_pipeline(self):
-        # for artifact in self._pipeline.artifacts:
         self.automl.registry.register(self._pipeline)
         self._data_handler.save_in_registry(self._dataset)
         st.write("Pipeline saved.")
 
     def _can_load_existing_pipelines(self):
-        pipe1 = self.automl.registry.list(type="pipeline")[0]
-        # st.write(pipe1.id, pipe1.name, pipe1.asset_path)
-        # st.write(pipe1.data)
         return len(self.automl.registry.list(type="pipeline")) > 0
 
     def load_pipeline(self):
@@ -248,10 +244,6 @@ class PreprocessingHandler():
                                 else:
                                     data_x = np.concatenate(
                                         [data_x, item[1]], axis=1)
-                            prep_y = preprocess_features(
-                                [self._pipeline.target_feature],
-                                self._dataset)
-                            # st.write(prep_y)
 
                             data_y = np.asarray(self._dataframe[
                                 self._selection_ground_truth])
