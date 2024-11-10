@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 from autoop.core.ml.dataset import Dataset
-# from autoop.core.ml.model.regression import RidgeRegression
-from sklearn.model_selection import train_test_split
 
 
 
