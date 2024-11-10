@@ -151,36 +151,37 @@ If the feature has been implemented by both students, write `both`.
 
 If you did not implement the feature
 
-| Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
-|-------------------------------------- |--------------|----------------------|--------------------------|---------|         
-| Up-to-date requirements.txt           | NF           | both                     | X         | |
-| `ML/detect-features`                  | FN           | Katya                     |X         | |
-| `ML/artifact`                         | NF           | Iva                     |X         | |
-| `ML/feature`                          | NF           | Iva                     |X         | |
-| `ML/metric`                           | NF           | Katya                     |    X     | |
-| `ML/metric/extensions`                | FN           | Katya                     |   X      | |
-| `ML/model`                            | NF           | Iva                     |      X   | |
-| `ML/model/extensions`                 | FN           | Katya                     |     X    | |
-| `ML/pipeline/evaluation`              | FN           | Katya                     |      X   | | 
-| `ST/page/datasets`                    | NF           | Katya                     |       X  | |
-| `ST/datasets/management/create`       | FN           | Katya                     |       X | |
-| `ST/datasets/management/save`         | FN           | Katya                     |X         | |
-| `ST/page/modelling`                   | NF           | both                     |  X       | |
-| `ST/modelling/datasets/list`          | FN           | Iva                     |    X     | |
-| `ST/modelling/datasets/features`      | FN           | Iva                     |     X    | |
-| `ST/modelling/models`                 | FN           | Iva                     |  X       | |
-| `ST/modelling/pipeline/split`         | FN           | Iva                     |   X      | |
-| `ST/modelling/pipeline/metrics`       | FN           | Iva                     |    X     | |
-| `ST/modelling/pipeline/summary`       | FN           | Iva                     |     X    | |
-| `ST/modelling/pipeline/train`         | FN           | Katya                     |    X     | |
-| `ST/modelling/pipeline/save`          | FN           | Katya                     |     X    | |
-| `ST/page/deployment`                  | FN           | Katya                      |     X    | |
-| `ST/deployment/load`                  | FN           | Katya                     |       X  | |
-| `ST/deployment/predict`               | FN           | both                     |     X    | |
+| Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment                                                                                                           |
+|-------------------------------------- |--------------|----------------------|---------------------------------------|-------------------------------------------------------------------------------------------------------------------|         
+| Up-to-date requirements.txt           | NF           | both                     | X                                     |                                                                                                                   |
+| `ML/detect-features`                  | FN           | Katya                     | X                                     |                                                                                                                   |
+| `ML/artifact`                         | NF           | Iva                     | X                                     |                                                                                                                   |
+| `ML/feature`                          | NF           | Iva                     | X                                     |                                                                                                                   |
+| `ML/metric`                           | NF           | Katya                     | X                                     |                                                                                                                   |
+| `ML/metric/extensions`                | FN           | Katya                     | X                                     |                                                                                                                   |
+| `ML/model`                            | NF           | Iva                     | X                                     |                                                                                                                   |
+| `ML/model/extensions`                 | FN           | Katya                     | X                                     |                                                                                                                   |
+| `ML/pipeline/evaluation`              | FN           | Katya                     | X                                     |                                                                                                                   | 
+| `ST/page/datasets`                    | NF           | Katya                     | X                                     |                                                                                                                   |
+| `ST/datasets/management/create`       | FN           | Katya                     | X                                     |                                                                                                                   |
+| `ST/datasets/management/save`         | FN           | Katya                     | X                                     |                                                                                                                   |
+| `ST/page/modelling`                   | NF           | both                     | X                                     |                                                                                                                   |
+| `ST/modelling/datasets/list`          | FN           | Iva                     | X                                     |                                                                                                                   |
+| `ST/modelling/datasets/features`      | FN           | Iva                     | X                                     |                                                                                                                   |
+| `ST/modelling/models`                 | FN           | Iva                     | X                                     |                                                                                                                   |
+| `ST/modelling/pipeline/split`         | FN           | Iva                     | X                                     |                                                                                                                   |
+| `ST/modelling/pipeline/metrics`       | FN           | Iva                     | X                                     |                                                                                                                   |
+| `ST/modelling/pipeline/summary`       | FN           | Iva                     | X                                     |                                                                                                                   |
+| `ST/modelling/pipeline/train`         | FN           | Katya                     | X                                     |                                                                                                                   |
+| `ST/modelling/pipeline/save`          | FN           | Katya                     |                                       | Pipeline class' artifacts did not save properly; Tried and failed to re-implement; Python is not good for OOP :,) |
+| `ST/page/deployment`                  | FN           | Katya                      | X                                     |                                                                                                                   |
+| `ST/deployment/load`                  | FN           | Katya                     |                                       |                                                                                                                   |
+| `ST/deployment/predict`               | FN           | both                     |                                       |                                                                                                                   |
 
 If you add extra features, please indicate them below:
-| Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
-|-------------------------------------- |--------------|----------------------|---------|-----|
-|`app/core/ui_utils`           |   FN         |      both                |   X      | |
-|`app/data`           |       NF     |          Iva            |      X   | |
-|`ML/ml_type`           |     NF       |        Katya              |   X      | |
+
+| Requirement                  | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
+|----------------------------- |--------------|-------------------------------|----------|---|
+|`app/core/ui_utils`           |   FN         |      both                     |   X      | |
+|`app/data`                    |       NF     |          Iva                  |      X   | |
+|`ML/ml_type`                  |     NF       |        Katya                  |   X      | |
