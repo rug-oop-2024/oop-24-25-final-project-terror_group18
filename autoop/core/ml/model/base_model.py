@@ -3,8 +3,7 @@ from autoop.core.ml.artifact import Artifact
 from typing import Any
 import numpy as np
 from copy import deepcopy
-from typing import Literal, List
-import uuid
+from typing import List
 from autoop.core.ml.ml_type import MLType
 
 
@@ -58,11 +57,11 @@ class Model(ABC, MLType):
         return None
 
     @abstractmethod
-    def predict(self, test_X: np.ndarray) -> Any:
+    def predict(self, test_X: np.ndarray) -> None:
         """
         The abstract method that predicts the y-values for the test data.
         :param test_X: np.ndarray test observations data
-        :return: Any
+        :return: None
         """
         return None
 

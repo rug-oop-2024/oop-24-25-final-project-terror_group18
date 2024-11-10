@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from typing import Any
 import numpy as np
 from autoop.core.ml.ml_type import MLType
 from typing import Callable
@@ -57,7 +56,7 @@ class Metric(ABC, MLType):
         The call method for the Metric class.
         :param y_true: np.ndarray
         :param y_pred: np.ndarray
-        :return: Any
+        :return: Callable
         """
         return self.evaluate(y_true, y_pred)
 
@@ -217,9 +216,8 @@ class ConfusionMatrix(Metric):
         :param y_pred: np.ndarray
         :return: int
         """
-        return len(y_true)**2 - (self.find_FN(y_true, y_pred) +
-                                 self.find_FP(y_true, y_pred) +
-                                 self.find_TP(y_true, y_pred))
+        return len(y_true)**2 - ((self.find_FN(y_true, y_pred)) + (
+            self.find_FP(y_true, y_pred)) + (self.find_TP(y_true, y_pred)))
 
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
         """
@@ -276,7 +274,7 @@ class Precision(ConfusionMatrix):
         """
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
-        return TP/(TP+FP)
+        return TP / (TP+FP)
 
 
 class Recall(ConfusionMatrix):
@@ -300,7 +298,7 @@ class Recall(ConfusionMatrix):
         """
         TP = super().find_TP(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
-        return TP/(TP+FN)
+        return TP / (TP+FN)
 
 
 class RootMeanSquaredError(MeanSquaredError):
