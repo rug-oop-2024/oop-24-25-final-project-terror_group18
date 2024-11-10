@@ -121,16 +121,16 @@ class PreprocessingHandler():
         self._selection_ground_truth = self._select_ground_truth(default_gt)
         self._selection_observations = self._select_observations(default_obs)
         self._handle_duplicate_features()
-        return (len(self._selection_observations) != 0 and
-                self._selection_ground_truth is not None)
+        return (len(self._selection_observations) != 0
+                and self._selection_ground_truth is not None)
 
     def dataset_is_uploaded(self) -> bool:
         """
         A method to check if the dataset is uploaded.
         :return: bool
         """
-        if (self._dataframe is None
-           or 'dataframe' not in st.session_state.keys()):
+        if (self._dataframe is None or
+           'dataframe' not in st.session_state.keys()):
             st.write("Please upload your dataset in the \"Dataset\" page.")
             return False
         return True
@@ -228,7 +228,7 @@ class PreprocessingHandler():
             return False
         return True
 
-    def validate_data(self) -> 'List'[np.ndarray, np.ndarray]:
+    def validate_data(self) -> List[np.ndarray, np.ndarray]:
         """
         A method to validate the data.
         :return: Tuple[np.ndarray, np.ndarray]
