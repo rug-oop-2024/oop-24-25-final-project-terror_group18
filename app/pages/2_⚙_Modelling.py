@@ -1,6 +1,5 @@
 import numpy as np
 import streamlit as st
-import pandas as pd
 from app.core.system import AutoMLSystem
 from app.core.ui_utils import DataHandler
 from autoop.core.ml.dataset import Dataset
@@ -12,7 +11,6 @@ from autoop.core.ml.metric import METRICS_CLASSIFICATION, METRICS_REGRESSION
 from autoop.core.ml.metric import get_metric
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-from scipy import stats
 from sklearn import metrics
 
 from autoop.functional.preprocessing import preprocess_features
@@ -61,7 +59,6 @@ class PreprocessingHandler():
             placeholder="Select one or more columns...",
             key="multiselect_observations"
         )
-
         return selection_observations
 
     def save_pipeline(self):
@@ -252,11 +249,11 @@ class PreprocessingHandler():
                             #     page_file = pages[selected_page]
                             #     st.switch_page(page_file)
 
-                            '''data_x = np.asarray(
-                                self._dataframe[self._selection_observations])
-                            data_y = np.asarray(
-                                [self._dataframe[self._selection_ground_truth]]).transpose()
-                            '''
+                            # data_x = np.asarray(
+                            #     self._dataframe[self._selection_observations])
+                            # data_y = np.asarray(
+                            #     [self._dataframe[self._selection_ground_truth]]).transpose()
+                            
 
                             prep_x = preprocess_features(self._pipeline.input_features, self._dataset)
                             data_x = None
@@ -340,16 +337,17 @@ class PreprocessingHandler():
                                 plt.title("2D Scatter Plot of Classification Data")
                                 plt.legend()
                                 st.pyplot(plt.gcf())
-                            # else:
-                            #     fig, axes = plt.subplots(
-                            #         nrows=1, ncols=observations_columns_count,
-                            #         figsize=(15, 5))
-                            #     for i in range(observations_columns_count):
-                            #         axes[i].hist(
-                            #             test_x[:, i], bins=15, alpha=0.7)
-                            #         axes[i].set_title(f"Feature {i+1}")
-                            #     plt.suptitle("Distribution of Each Feature")
-                            #     st.pyplot(fig)
+                            else:
+                                fig, axes = plt.subplots(
+                                    nrows=1, ncols=observations_columns_count,
+                                    figsize=(15, 5))
+                                for i in range(observations_columns_count):
+                                    axes[i].hist(
+                                        test_x[:, i], bins=15, alpha=0.7)
+                                    # axes[i].set_title(f"Feature {i+1}")
+                                    axes[i].set_title(f"{self._selection_observations[i]}")
+                                plt.suptitle("Distribution of Each Feature")
+                                st.pyplot(fig)
                             # plt.scatter(test_x, y_pred)
                             # st.pyplot(plt.gcf())
 
@@ -368,18 +366,19 @@ class PreprocessingHandler():
                             # # st.write(pd.DataFrame(y_pred).head())
 
 
-                            st.markdown("**Metrics**")
+                            st.header("**Metrics**")
                             # for metric, result in metric_results:
                             #     st.markdown(f"{metric}: {result}")
                             for metric_result in metric_results:
                                 for metric, result in metric_result.items():
-                                    st.markdown(f"**{metric}:** {result}")
                                     if metric == "Confusion Matrix":
                                         st.markdown("***Confusion Matrix:***")
                                         metrics.ConfusionMatrixDisplay(
                                             confusion_matrix=result,
                                             display_labels=[0, 1]).plot()
                                         st.pyplot(plt.gcf())
+                                    else:
+                                        st.markdown(f"**{metric}:** {result}")
                                     
                                     
 
