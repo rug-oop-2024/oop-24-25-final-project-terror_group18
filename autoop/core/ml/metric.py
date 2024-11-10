@@ -193,15 +193,23 @@ class ConfusionMatrix(Metric):
     def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
         # return np.sum((y_true == 1) & (y_pred == 0))
+        # self._check_matrix(y_true, y_pred)
+        # false_negatives python -m streamlit run app/Welcome.py= []
+        # # for i in range(self._matrix):
+        # for i in range(self._matrix.shape[0]):
+        #     sum = 0
+        #     for j in range(self._matrix[i]):
+        #         sum += self._matrix[i][j]
+        #     false_negatives.append(sum - self._matrix[i][i])
+        # return np.mean(false_negatives)
+
         self._check_matrix(y_true, y_pred)
         false_negatives = []
-        # for i in range(self._matrix):
         for i in range(self._matrix.shape[0]):
-            sum = 0
-            for j in range(self._matrix[i]):
-                sum += self._matrix[i][j]
-            false_negatives.append(sum - self._matrix[i][i])
-        return np.mean(false_negatives)
+            row_sum = np.sum(self._matrix[i, :])  # Sum of all elements in row i
+            fn_count = row_sum - self._matrix[i, i]  # Exclude true positives in the diagonal
+            false_negatives.append(fn_count)
+        return int(np.sum(false_negatives))
 
     def find_FP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of false positives (y = 0, y_pred = 1) Type-I error

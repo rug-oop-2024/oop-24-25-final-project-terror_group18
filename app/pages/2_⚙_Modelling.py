@@ -252,11 +252,11 @@ class PreprocessingHandler():
                             #     page_file = pages[selected_page]
                             #     st.switch_page(page_file)
 
-                            '''data_x = np.asarray(
-                                self._dataframe[self._selection_observations])
-                            data_y = np.asarray(
-                                [self._dataframe[self._selection_ground_truth]]).transpose()
-                            '''
+                            # data_x = np.asarray(
+                            #     self._dataframe[self._selection_observations])
+                            # data_y = np.asarray(
+                            #     [self._dataframe[self._selection_ground_truth]]).transpose()
+                            
 
                             prep_x = preprocess_features(self._pipeline.input_features, self._dataset)
                             data_x = None
