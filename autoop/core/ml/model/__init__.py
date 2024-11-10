@@ -1,3 +1,8 @@
+
+"""
+List of available models.
+"""
+
 from autoop.core.ml.model.regression import MultipleLinearRegression
 from autoop.core.ml.model.regression import LassoRegression
 from autoop.core.ml.model.regression import RidgeRegression
@@ -6,9 +11,7 @@ from autoop.core.ml.model.classification import KNearestNeighbors
 from autoop.core.ml.model.classification import SupportVectorClassifier
 from autoop.core.ml.model.base_model import Model
 
-"""
-List of available models.
-"""
+
 REGRESSION_MODELS = [
     "Lasso Regression",
     "Multiple Linear Regression",
@@ -24,7 +27,6 @@ CLASSIFICATION_MODELS = [
 
 def get_model(model_name: str) -> Model:
     """Factory function to get a model by name."""
-
     if model_name == "Multiple Linear Regression":
         return MultipleLinearRegression()
     elif model_name == "Lasso Regression":
