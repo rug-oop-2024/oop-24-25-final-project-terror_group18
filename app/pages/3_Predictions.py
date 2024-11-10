@@ -20,55 +20,6 @@ else:
     st.write(st.session_state["pipeline_results"])
 
 
-# st.set_page_config(page_title="Modelling", page_icon="📈")
-# dataframe = pd.read_csv(r"C:\Users\Iva\Downloads\Life Expectancy Data.csv")
-# dataset = Dataset.from_dataframe(data=dataframe, name="Life Expectancy Data",
-#                                  asset_path="Life Expectancy Data.csv")
-# st.write(dataframe.head())
-
-# selection_ground_truth = st.selectbox(
-#         "Select the column with the data you want to predict:",
-#         options=dataframe.columns,
-#         placeholder="Select your ground truth...",
-#         index=None,
-#         key="select_ground_truth",
-#     )
-# y = dataframe[selection_ground_truth].head()
-
-
-# selection_observations = st.multiselect(
-#     "Select your observations columns:",
-#     options=dataframe.columns,
-#     default=None,          # No default selection
-#     placeholder="Select one or more columns...",
-#     key="multiselect_observations"
-# )
-# X = dataframe[selection_observations].head()
-
-# # model = RidgeRegression()
-
-# # model.fit(dataframe[selection_observations], dataframe[selection_ground_truth])
-# data_split = st.slider("Select your train/test split", 0, 100)
-# st.write(data_split)
-# st.write(X)
-# st.write(y)
-
-
-# # pages = {
-# #     "Instructions": "./pages/0_✅_Instructions.py",
-# #     "Dataset": "./pages/1_📊_Datasets.py",
-# #     "Modelling": "./pages/2_⚙_Modelling.py",
-# #     "Predictions": "./pages/3_Predictions.py"
-# # }
-# # selected_page = "Dataset"
-# # # Button to switch page
-# # switch_page = st.button("Switch page")
-# # if switch_page:
-# #     # Switch to the selected page
-# #     page_file = pages[selected_page]
-# #     st.switch_page(page_file):
-# #     # ????st.write(f"You are now on page: {selected_page}")
-
 # from sklearn.model_selection import train_test_split
 # from sklearn.ensemble import RandomForestClassifier
 # from sklearn.datasets import load_iris
