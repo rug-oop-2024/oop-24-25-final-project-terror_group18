@@ -51,7 +51,7 @@ class Metric(ABC, MLType):
         """
         self._metrics.append(self)
 
-    def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> Any:
+    def __call__(self, y_true: np.ndarray, y_pred: np.ndarray):
         """
         The call method for the Metric class.
         :param y_true: np.ndarray
