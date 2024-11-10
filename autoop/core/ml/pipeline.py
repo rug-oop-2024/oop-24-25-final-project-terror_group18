@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import List
 import pickle
 from autoop.core.ml.artifact import Artifact
@@ -47,6 +48,14 @@ class Pipeline():
                and model._type != "regression"):
                 raise ValueError("Model type must be regression "
                                  "for continuous target feature")
+
+    @property
+    def input_features(self):
+        return deepcopy(self._input_features)
+
+    @property
+    def target_feature(self):
+        return deepcopy(self._target_feature)
 
     def __str__(self) -> str:
         """The string representation of the pipeline.
