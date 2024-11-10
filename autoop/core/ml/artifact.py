@@ -1,11 +1,12 @@
 import io
-
 import pandas as pd
-from pydantic import BaseModel, Field
 import base64
 
 
 class Artifact():
+    """
+    The base class for all artifacts.
+    """
     asset = {}
     id: str
     data: bytes
@@ -23,16 +24,26 @@ class Artifact():
                  metadata: dict = {},
                  data: bytes = b"NA",
                  type: str = "NA",
-                 **kwargs):
+                 **kwargs: dict) -> None:
+        """
+        The constructor for the Artifact class.
+
+        :param name: str name of the artifact
+        :param version: str version of the artifact
+        :param asset_path: str path of the artifact
+        :param tags: list tags of the artifact
+        :param metadata: dict metadata of the artifact
+        :param data: bytes data of the artifact
+        :param type: str type of the artifact
+        :param kwargs: dict kwargs of the artifact
+        :return: None
+        """
         super().__init__()
         encoded_id = base64.b64encode(
             asset_path.encode('utf-8')
         ).decode('utf-8')
 
         self.id = f"{encoded_id}_{version}"
-        #raise ValueError(f"id is {self.id}")
-        '''if not isinstance(data, bytes):
-            data = base64.b64encode(data)'''
         self.data = data
         self.name = name
         self.version = version
@@ -42,28 +53,22 @@ class Artifact():
         self.type = type
         self.asset["data"] = data
 
-        #try:
         for key, value in kwargs.items():
             setattr(self, key, value)
-        '''except ValueError:
-            raise ValueError(f"kwargs are {kwargs}")'''
-
 
     def read(self) -> pd.DataFrame:
         """
-        Read artifact data
+        Read artifact data as a dataframe.
+        :return: pd.DataFrame
         """
         bytes = self.data
         csv = bytes.decode()
         return pd.read_csv(io.StringIO(csv))
 
-    def save(self, data: bytes):
+    def save(self, data: bytes) -> None:
         """
-        Args:
-            data: bytes data to save
-
-        Returns: None
-
+        Save artifact data.
+        :param data: bytes
+        :return: None
         """
         self.data = base64.b64encode(data)
-
