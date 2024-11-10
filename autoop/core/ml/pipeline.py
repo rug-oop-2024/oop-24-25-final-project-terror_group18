@@ -48,12 +48,12 @@ class Pipeline(Artifact):
         self._split = split
         self._update_data()
         if self._model is not None:
-            if (target_feature.type == "categorical"
-               and model._type != "classification"):
+            if ((target_feature.type == "categorical") and (
+               model._type != "classification")):
                 raise ValueError("Model type must be classification "
                                  "for categorical target feature")
-            if (target_feature.type == "continuous"
-               and model._type != "regression"):
+            if ((target_feature.type == "continuous") and (
+               model._type != "regression")):
                 raise ValueError("Model type must be regression "
                                  "for continuous target feature")
 

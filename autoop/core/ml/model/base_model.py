@@ -1,6 +1,5 @@
 from abc import abstractmethod, ABC
 from autoop.core.ml.artifact import Artifact
-from typing import Any
 import numpy as np
 from copy import deepcopy
 from typing import List
