@@ -19,9 +19,15 @@ dt_gym = Dataset.from_dataframe(
     asset_path="app/data/Gym Members Exercise Tracking.csv")
 automl.registry.register(dt_gym)
 
+df_mobile = pd.read_csv("app/data/Mobile Users Behavior.csv")
+dt_mobile = Dataset.from_dataframe(
+    data=df_mobile, name="Mobile Users Behavior",
+    asset_path="app/data/Mobile Users Behavior.csv")
+automl.registry.register(dt_mobile)
+
 datasets_dictionary = {dt_students.name: dt_students.id,
-                       dt_gym.name: dt_gym.id}
-datasets_names_list = [dt_students.name, dt_gym.name]
+                       dt_gym.name: dt_gym.id, dt_mobile.name: dt_mobile.id}
+datasets_names_list = [dt_students.name, dt_gym.name, dt_mobile.name]
 
 
 class DataHandler:
@@ -93,7 +99,6 @@ class DataHandler:
         :return: None
         """
         st.write(self.df.head())
-        st.write(f"You chose {self._file_path.removesuffix('.csv')}")
 
     @staticmethod
     def save_in_registry(dataset: Dataset) -> bool:
