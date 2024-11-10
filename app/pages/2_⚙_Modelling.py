@@ -261,25 +261,25 @@ class PreprocessingHandler():
                             prep_x = preprocess_features(self._pipeline.input_features, self._dataset)
                             data_x = None
                             for item in prep_x:
-                                st.write(item[1])
+                                #st.write(item[1])
                                 if data_x is None:
                                     data_x = item[1]
                                 else:
                                     data_x = np.concatenate([data_x, item[1]], axis=1)
-                                st.write(f"dataX is {data_x}")
+                                st.write(f"dataX is {data_x[:5]}")
                                 # for i in range(len(item[1])):
                                 #     st.write(item[1][i])
                                 #     data_x[i].append(item[1][i])
                             #data_x = np.concatenate([x[1] for x in prep_x], axis=1)
                             # [x[1] if x[2]['type'] != 'OneHotEncoder' else np.array([x[1]]) for x in prep_x]
                             # data_x = np.asarray(data_x)
-                            st.write(data_x)
+                            #st.write(data_x)
 
                             prep_y = preprocess_features([self._pipeline.target_feature],
                                                          self._dataset)
-                            st.write(item for item in prep_y)
+                            #st.write(item for item in prep_y)
                             data_y = prep_y[0][1]
-                            st.write(data_y)
+                            st.write(f"dataY is {data_y[:5]}")
 
                             train_x, test_x, train_y, test_y = train_test_split(
                                 data_x, data_y, train_size=data_split / 100,
