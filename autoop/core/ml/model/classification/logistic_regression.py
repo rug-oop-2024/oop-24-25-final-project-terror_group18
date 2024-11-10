@@ -18,7 +18,7 @@ class LogisticRegressor(Model):
         self._model = LogisticRegression()
 
     def fit(self, train_x: np.ndarray, train_y: np.array,
-            sample_weight=None) -> None:
+            sample_weight: np.ndarray = None) -> None:
         """
         A method that fits the training data to the model.
         :param train_x: np.ndarray training observations data

@@ -7,7 +7,7 @@ class SupportVectorClassifier(Model):
     """
     The class for Support Vector Classifier model.
     """
-    def __init__(self, kernel='linear') -> None:
+    def __init__(self, kernel: str = 'linear') -> None:
         """
         The constructor for the SupportVectorClassifier class.
         :param kernel: kernel

@@ -6,6 +6,9 @@ from autoop.core.ml.model.classification import KNearestNeighbors
 from autoop.core.ml.model.classification import SupportVectorClassifier
 from autoop.core.ml.model.base_model import Model
 
+"""
+List of available models.
+"""
 REGRESSION_MODELS = [
     "Lasso Regression",
     "Multiple Linear Regression",

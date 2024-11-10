@@ -5,4 +5,8 @@ from autoop.core.ml.model.classification.support_vector_machines import (
     SupportVectorClassifier)
 
 
+"""
+List of available models.
+"""
+
 __all__ = [LogisticRegressor, KNearestNeighbors, SupportVectorClassifier]

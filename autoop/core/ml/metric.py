@@ -274,7 +274,7 @@ class Precision(ConfusionMatrix):
         """
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
-        return TP / (TP+FP)
+        return TP / (TP + FP)
 
 
 class Recall(ConfusionMatrix):
@@ -298,7 +298,7 @@ class Recall(ConfusionMatrix):
         """
         TP = super().find_TP(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
-        return TP / (TP+FN)
+        return TP / (TP + FN)
 
 
 class RootMeanSquaredError(MeanSquaredError):
