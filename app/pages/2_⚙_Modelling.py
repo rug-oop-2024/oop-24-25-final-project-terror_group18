@@ -337,16 +337,17 @@ class PreprocessingHandler():
                                 plt.title("2D Scatter Plot of Classification Data")
                                 plt.legend()
                                 st.pyplot(plt.gcf())
-                            # else:
-                            #     fig, axes = plt.subplots(
-                            #         nrows=1, ncols=observations_columns_count,
-                            #         figsize=(15, 5))
-                            #     for i in range(observations_columns_count):
-                            #         axes[i].hist(
-                            #             test_x[:, i], bins=15, alpha=0.7)
-                            #         axes[i].set_title(f"Feature {i+1}")
-                            #     plt.suptitle("Distribution of Each Feature")
-                            #     st.pyplot(fig)
+                            else:
+                                fig, axes = plt.subplots(
+                                    nrows=1, ncols=observations_columns_count,
+                                    figsize=(15, 5))
+                                for i in range(observations_columns_count):
+                                    axes[i].hist(
+                                        test_x[:, i], bins=15, alpha=0.7)
+                                    # axes[i].set_title(f"Feature {i+1}")
+                                    axes[i].set_title(f"{self._selection_observations[i]}")
+                                plt.suptitle("Distribution of Each Feature")
+                                st.pyplot(fig)
                             # plt.scatter(test_x, y_pred)
                             # st.pyplot(plt.gcf())
 
@@ -365,7 +366,7 @@ class PreprocessingHandler():
                             # # st.write(pd.DataFrame(y_pred).head())
 
 
-                            st.markdown("**Metrics**")
+                            st.header("**Metrics**")
                             # for metric, result in metric_results:
                             #     st.markdown(f"{metric}: {result}")
                             for metric_result in metric_results:
