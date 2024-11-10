@@ -21,8 +21,8 @@ class SupportVectorClassifier(Model):
     def fit(self, train_x: np.ndarray, train_y: np.array) -> None:
         """
         A method that fits the training data to the model.
-        :param train_x: np.ndarray training data
-        :param train_y: np.ndarray training labels
+        :param train_x: np.ndarray training observations data
+        :param train_y: np.ndarray training ground truth labels
         :return: None
         """
         self._model.fit(train_x, train_y)
