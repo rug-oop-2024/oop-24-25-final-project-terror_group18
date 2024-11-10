@@ -322,18 +322,17 @@ class PreprocessingHandler():
                             elif (self._model.type == "classification"
                                   and observations_columns_count == 2):
                                 plt.figure(figsize=(10, 6))
-                                unique_classes = np.unique(test_y)  # Get unique classes from test_y
+                                unique_classes = np.unique(test_y)
 
-                                # Loop over each unique class to plot with a different color
                                 for class_value in unique_classes:
-                                    class_indices = (test_y == class_value).ravel()  # Indices of samples belonging to the current class
+                                    class_indices = (test_y == class_value).ravel()
                                     plt.scatter(
                                         test_x[class_indices, 0], test_x[class_indices, 1],
                                         label=f"Class {class_value}", s=40, edgecolor='k'
                                     )
 
-                                plt.xlabel("Feature 1")
-                                plt.ylabel("Feature 2")
+                                plt.xlabel(f"{self._selection_observations[0]}")
+                                plt.ylabel(f"{self._selection_observations[1]}")
                                 plt.title("2D Scatter Plot of Classification Data")
                                 plt.legend()
                                 st.pyplot(plt.gcf())
@@ -341,11 +340,20 @@ class PreprocessingHandler():
                                 fig, axes = plt.subplots(
                                     nrows=1, ncols=observations_columns_count,
                                     figsize=(15, 5))
-                                for i in range(observations_columns_count):
-                                    axes[i].hist(
-                                        test_x[:, i], bins=15, alpha=0.7)
-                                    # axes[i].set_title(f"Feature {i+1}")
-                                    axes[i].set_title(f"{self._selection_observations[i]}")
+                                if observations_columns_count == 1:
+                                    # Single subplot case
+                                    axes.hist(test_x[:, 0], bins=15, alpha=0.7)
+                                    axes.set_title(self._selection_observations[0])
+                                else:
+                                    # Multiple subplots case
+                                    for i in range(observations_columns_count):
+                                        axes[i].hist(test_x[:, i], bins=15, alpha=0.7)
+                                        axes[i].set_title(self._selection_observations[i])
+                                # for i in range(observations_columns_count):
+                                #     axes[i].hist(
+                                #         test_x[:, i], bins=15, alpha=0.7)
+                                #     # axes[i].set_title(f"Feature {i+1}")
+                                #     axes[i].set_title(f"{self._selection_observations[i]}")
                                 plt.suptitle("Distribution of Each Feature")
                                 st.pyplot(fig)
                             # plt.scatter(test_x, y_pred)

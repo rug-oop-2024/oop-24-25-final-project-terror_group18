@@ -215,9 +215,20 @@ class ConfusionMatrix(Metric):
         # counts the number of false positives (y = 0, y_pred = 1) Type-I error
         self._check_matrix(y_true, y_pred)
         false_positives = []
-        for i in range(self._matrix):
-            false_positives.append(np.sum(self._matrix[i]) - self._matrix[i][i])
-        return np.mean(false_positives)
+        # for i in range(self._matrix):
+        #     false_positives.append(np.sum(self._matrix[i]) - self._matrix[i][i])
+        # return np.mean(false_positives)
+
+        # self._check_matrix(y_true, y_pred)
+        # for i in range(self._matrix.shape[0]):
+        #     false_positives = np.sum(self._matrix[:, i]) - self._matrix[i, i]
+        # return np.sum(false_positives)
+
+        for i in range(self._matrix.shape[0]):
+            col_sum = np.sum(self._matrix[:, i])  # Sum of all elements in column i
+            fp_count = col_sum - self._matrix[i, i]  # Exclude true positives
+            false_positives.append(fp_count)
+        return np.sum(false_positives)
 
     def find_TN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         # counts the number of true negatives (y = 0, y_pred = 0)
