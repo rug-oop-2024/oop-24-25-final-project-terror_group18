@@ -37,7 +37,8 @@ class Pipeline(Artifact):
         :param split: float
         :return: None
         """
-        super().__init__(name=name, asset_path=name, type='pipeline', *args, **kwargs)
+        super().__init__(
+            name=name, asset_path=name, type='pipeline', *args, **kwargs)
         self._dataset = dataset
         self._model = model
         self._input_features = input_features
@@ -57,11 +58,19 @@ class Pipeline(Artifact):
                                  "for continuous target feature")
 
     @property
-    def input_features(self):
+    def input_features(self) -> List[Feature]:
+        """
+        The getter method for the input features.
+        :return: List[Feature]
+        """
         return deepcopy(self._input_features)
 
     @property
-    def target_feature(self):
+    def target_feature(self) -> Feature:
+        """
+        The getter method for the target feature.
+        :return: Feature
+        """
         return deepcopy(self._target_feature)
 
     def __str__(self) -> str:
@@ -115,7 +124,10 @@ Pipeline(
                 name=f"pipeline_model_{self._model.type}"))
         return artifacts
 
-    def _update_data(self):
+    def _update_data(self) -> None:
+        """Update the data property of the pipeline artifact.
+        :return: None
+        """
         liberal_arts_ids = [art.id for art in self.artifacts]
 
         pipeline_data = {
@@ -127,10 +139,9 @@ Pipeline(
         self.save(pickle.dumps(pipeline_data))
 
     @staticmethod
-    def from_artifact(artifact: Artifact, automl: AutoMLSystem):
+    def from_artifact(artifact: Artifact, automl: AutoMLSystem) -> 'Pipeline':
         print(artifact.type)
         pipeline_data = pickle.loads(artifact.data.decode())
-        #automl = AutoMLSystem.get_instance()
         ds = None
         md = None
         for id in pipeline_data["artifact_IDs"]:
@@ -144,16 +155,14 @@ Pipeline(
             elif art.type == 'model':
                 md = get_model(art.name)
 
-
         return Pipeline(
-            metrics= None,
+            metrics=None,
             dataset=ds,
-            model= md,
+            model=md,
             input_features=pipeline_data['input_features'],
             target_feature=pipeline_data['target_feature'],
             split=pipeline_data["split"]
         )
-
 
     def _register_artifact(self, name: str, artifact: Artifact) -> None:
         """
