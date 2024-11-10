@@ -74,6 +74,8 @@ class ArtifactRegistry():
         :return: Artifact
         """
         data = self._database.get("artifacts", artifact_id)
+        if data is None:
+            return None
         return Artifact(
             name=data["name"],
             version=data["version"],
