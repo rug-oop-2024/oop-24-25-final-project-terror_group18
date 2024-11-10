@@ -1,6 +1,5 @@
 import numpy as np
 import streamlit as st
-import pandas as pd
 from app.core.system import AutoMLSystem
 from app.core.ui_utils import DataHandler
 from autoop.core.ml.dataset import Dataset
@@ -12,7 +11,6 @@ from autoop.core.ml.metric import METRICS_CLASSIFICATION, METRICS_REGRESSION
 from autoop.core.ml.metric import get_metric
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-from scipy import stats
 from sklearn import metrics
 
 from autoop.functional.preprocessing import preprocess_features
@@ -61,7 +59,6 @@ class PreprocessingHandler():
             placeholder="Select one or more columns...",
             key="multiselect_observations"
         )
-
         return selection_observations
 
     def save_pipeline(self):
@@ -371,13 +368,14 @@ class PreprocessingHandler():
                             #     st.markdown(f"{metric}: {result}")
                             for metric_result in metric_results:
                                 for metric, result in metric_result.items():
-                                    st.markdown(f"**{metric}:** {result}")
                                     if metric == "Confusion Matrix":
                                         st.markdown("***Confusion Matrix:***")
                                         metrics.ConfusionMatrixDisplay(
                                             confusion_matrix=result,
                                             display_labels=[0, 1]).plot()
                                         st.pyplot(plt.gcf())
+                                    else:
+                                        st.markdown(f"**{metric}:** {result}")
                                     
                                     
 
