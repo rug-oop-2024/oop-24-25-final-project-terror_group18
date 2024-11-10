@@ -11,13 +11,19 @@ from autoop.core.ml.metric import get_metric
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn import metrics
+from typing import Tuple
 
 from autoop.functional.preprocessing import preprocess_features
 
 st.set_page_config(page_title="Modelling", page_icon="📈")
 
 
-def write_helper_text(text: str):
+def write_helper_text(text: str) -> None:
+    """
+    A method to write helper text.
+    :param text: str
+    :return: None
+    """
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
 
@@ -31,8 +37,15 @@ datasets = automl.registry.list(type="dataset")
 
 
 class PreprocessingHandler():
-
-    def __init__(self, session_state):
+    """
+    A class to handle the preprocessing of the data.
+    """
+    def __init__(self, session_state: dict) -> None:
+        """
+        A constructor for the PreprocessingHandler class.
+        :param session_state: dict
+        :return: None
+        """
         self._model = None
         self.automl = automl
         self._desired_metrics = None
@@ -41,7 +54,11 @@ class PreprocessingHandler():
         self._data_handler = session_state['data_handler']
         self._pipeline = None
 
-    def select_ground_truth(self):
+    def select_ground_truth(self) -> str:
+        """
+        A method to select the ground truth column.
+        :return: str
+        """
         selection_ground_truth = st.selectbox(
             "Select the column with the data you want to predict:",
             options=self._dataframe.columns,
@@ -51,7 +68,11 @@ class PreprocessingHandler():
         )
         return selection_ground_truth
 
-    def select_observations(self):
+    def select_observations(self) -> list:
+        """
+        A method to select the observations columns.
+        :return: list
+        """
         selection_observations = st.multiselect(
             "Select your observations columns:",
             options=self._dataframe.columns,
@@ -61,15 +82,27 @@ class PreprocessingHandler():
         )
         return selection_observations
 
-    def save_pipeline(self):
+    def save_pipeline(self) -> None:
+        """
+        A method to save the pipeline.
+        :return: None
+        """
         self.automl.registry.register(self._pipeline)
         self._data_handler.save_in_registry(self._dataset)
         st.write("Pipeline saved.")
 
-    def _can_load_existing_pipelines(self):
+    def _can_load_existing_pipelines(self) -> bool:
+        """
+        A method to check if there are existing pipelines.
+        :return: bool
+        """
         return len(self.automl.registry.list(type="pipeline")) > 0
 
-    def load_pipeline(self):
+    def load_pipeline(self) -> None:
+        """
+        A method to load a pipeline.
+        :return: None
+        """
         pipelines = self.automl.registry.list(type="pipeline")
         pipe_name_to_id = {p.name: p.id for p in pipelines}
         pipeline_name = st.selectbox("Select your pipeline:",
@@ -78,21 +111,36 @@ class PreprocessingHandler():
         pipe_art = automl.registry.get(pipe_name_to_id[pipeline_name])
         self._pipeline = Pipeline.from_artifact(pipe_art, automl)
 
-    def _feature_selection(self, default_gt, default_obs):
+    def _feature_selection(self, default_gt: str, default_obs: list) -> bool:
+        """
+        A method to select the features.
+        :param default_gt: str
+        :param default_obs: list
+        :return: bool
+        """
         self._selection_ground_truth = self._select_ground_truth(default_gt)
         self._selection_observations = self._select_observations(default_obs)
         self._handle_duplicate_features()
         return (len(self._selection_observations) != 0 and
                 self._selection_ground_truth is not None)
 
-    def dataset_is_uploaded(self):
+    def dataset_is_uploaded(self) -> bool:
+        """
+        A method to check if the dataset is uploaded.
+        :return: bool
+        """
         if (self._dataframe is None
            or 'dataframe' not in st.session_state.keys()):
             st.write("Please upload your dataset in the \"Dataset\" page.")
             return False
         return True
 
-    def _select_ground_truth(self, default=None):
+    def _select_ground_truth(self, default: str = None) -> str:
+        """
+        A method to select the ground truth column.
+        :param default: str
+        :return: str
+        """
         idx = 0
         if default is not None:
             idx = self._dataframe.columns.get_loc(default)
@@ -105,7 +153,12 @@ class PreprocessingHandler():
         )
         return selection_ground_truth
 
-    def _select_observations(self, default=None):
+    def _select_observations(self, default: list = None) -> list:
+        """
+        A method to select the observations columns.
+        :param default: list
+        :return: list
+        """
         selection_observations = st.multiselect(
             "Select your observations columns:",
             options=self._dataframe.columns,
@@ -115,7 +168,11 @@ class PreprocessingHandler():
         )
         return selection_observations
 
-    def _handle_duplicate_features(self):
+    def _handle_duplicate_features(self) -> list:
+        """
+        A method to handle duplicate features.
+        :return: list
+        """
         for observation in self._selection_observations:
             if observation == self._selection_ground_truth:
                 st.markdown("You have selected the same column "
@@ -126,7 +183,11 @@ class PreprocessingHandler():
                 self._selection_observations.remove(observation)
         return self._selection_observations
 
-    def _select_model(self):
+    def _select_model(self) -> bool:
+        """
+        A method to select the model.
+        :return: bool
+        """
         types_options = {
             "categorical": ["classification", CLASSIFICATION_MODELS],
             "numerical": ["regression", REGRESSION_MODELS]}
@@ -145,7 +206,11 @@ class PreprocessingHandler():
                 return False
             return True
 
-    def _select_metrics(self):
+    def _select_metrics(self) -> bool:
+        """
+        A method to select the metrics.
+        :return: bool
+        """
         metrics_types = {'categorical': METRICS_CLASSIFICATION,
                          'numerical': METRICS_REGRESSION}
         for i, feature_type in enumerate(detect_feature_types(self._y_data)):
@@ -163,14 +228,22 @@ class PreprocessingHandler():
             return False
         return True
 
-    def validate_data(self):
+    def validate_data(self) -> 'Tuple'[np.ndarray, np.ndarray]:
+        """
+        A method to validate the data.
+        :return: Tuple[np.ndarray, np.ndarray]
+        """
         data_x = np.asarray(self._dataframe[self._selection_observations])
         data_y = np.asarray([self._dataframe[self._selection_ground_truth]])
         if data_x.shape[0] != data_y.shape[0]:
             data_y.transpose()
         return data_x, data_y
 
-    def run(self):
+    def run(self) -> None:
+        """
+        A method to run the data handler.
+        :return: None
+        """
         if self.dataset_is_uploaded:
             self._dataframe = self._data_handler.df
             self._dataset = self._data_handler.dataset
