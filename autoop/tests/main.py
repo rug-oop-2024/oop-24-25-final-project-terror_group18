@@ -7,3 +7,8 @@ from autoop.tests.test_pipeline import TestPipeline
 
 if __name__ == '__main__':
     unittest.main()
+
+    TestDatabase().test_init()
+    TestStorage().test_init()
+    TestFeatures().test_init()
+    TestPipeline().test_init()

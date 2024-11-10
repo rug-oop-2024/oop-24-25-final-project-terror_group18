@@ -9,7 +9,7 @@ METRICS_CLASSIFICATION = [
     "Precision",
     "Recall",
     "Confusion Matrix"
-]  
+]
 
 METRICS_REGRESSION = [
     "Mean Squared Error",
@@ -108,15 +108,13 @@ class MeanSquaredError(Metric):
         self.type = "regression"
         self.name = "Mean Squared Error"
 
-    #@override
-    def evaluate(self, y_true: Any, y_pred: Any) -> float:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         """
         The evaluate method for the Mean Squared Error metric class.
-        :param y_true: Any
-        :param y_pred: Any
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
         :return: float
         """
-        #Y_true is any / not np.ndarray???
         mse = (y_true - y_pred) ** 2
         return mse.mean()
 
@@ -135,34 +133,26 @@ class ConfusionMatrix(Metric):
         self._matrix = None
         self.name = "Confusion Matrix"
 
-    def _generate_matrix(self, y_true: np.ndarray, y_pred: np.ndarray)-> np.ndarray:
+    def _generate_matrix(self, y_true: np.ndarray,
+                         y_pred: np.ndarray) -> np.ndarray:
         """
         Generates confusion matrix
-        :param y_true: ground truth data
-        :param y_pred: observations
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
         :return: ndarray representing the matrix
         """
 
-            # Flatten y_true and y_pred if they are multidimensional
         y_true = y_true.ravel() if y_true.ndim > 1 else y_true
         y_pred = y_pred.ravel() if y_pred.ndim > 1 else y_pred
-
-        # keys = list(set(y_pred))  # Use set instead of dict.fromkeys for unique items
         keys = list(set(y_true).union(set(y_pred)))
         n = len(keys)
         matrix = np.zeros((n, n), dtype=int)
 
-        for pdata, tdata in zip(y_pred, y_true):  # Iterate over pairs of predictions and true values
+        for pdata, tdata in zip(y_pred, y_true):
             matrix[keys.index(pdata)][keys.index(tdata)] += 1
 
-        self._matrix = matrix  # Store the matrix in the instance for later use
+        self._matrix = matrix
         return matrix
-        # keys = list(dict.fromkeys(y_pred))
-        # n = len(keys)
-        # matrix = np.zeros((n, n))
-        # for pdata, tdata in zip(y_pred, y_true):
-        #     matrix[keys.index(pdata)][keys.index(tdata)] += 1
-        # return matrix
 
     def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
         """
@@ -184,70 +174,83 @@ class ConfusionMatrix(Metric):
         self._check_matrix(y_true, y_pred)
         true_positives = []
 
-        
-        for i in range(self._matrix.shape[0]): 
-        #for i in range(self._matrix):
+        for i in range(self._matrix.shape[0]):
             true_positives.append(self._matrix[i][i])
-        return np.mean(true_positives) #sum or mean??
+        return np.mean(true_positives)
 
     def find_FN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
-        # counts the number of false negatives (y = 1, y_pred = 0) Type-II error
-        # return np.sum((y_true == 1) & (y_pred == 0))
-        # self._check_matrix(y_true, y_pred)
-        # false_negatives python -m streamlit run app/Welcome.py= []
-        # # for i in range(self._matrix):
-        # for i in range(self._matrix.shape[0]):
-        #     sum = 0
-        #     for j in range(self._matrix[i]):
-        #         sum += self._matrix[i][j]
-        #     false_negatives.append(sum - self._matrix[i][i])
-        # return np.mean(false_negatives)
-
+        """
+        This method counts the number of false negatives.
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: int
+        """
         self._check_matrix(y_true, y_pred)
         false_negatives = []
         for i in range(self._matrix.shape[0]):
-            row_sum = np.sum(self._matrix[i, :])  # Sum of all elements in row i
-            fn_count = row_sum - self._matrix[i, i]  # Exclude true positives in the diagonal
+            row_sum = np.sum(self._matrix[i, :])
+            fn_count = row_sum - self._matrix[i, i]
             false_negatives.append(fn_count)
         return int(np.sum(false_negatives))
 
     def find_FP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
-        # counts the number of false positives (y = 0, y_pred = 1) Type-I error
+        """
+        This method counts the number of false positives.
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: int
+        """
         self._check_matrix(y_true, y_pred)
         false_positives = []
-        for i in range(self._matrix):
-            false_positives.append(np.sum(self._matrix[i]) - self._matrix[i][i])
-        return np.mean(false_positives)
+
+        for i in range(self._matrix.shape[0]):
+            col_sum = np.sum(self._matrix[:, i])
+            fp_count = col_sum - self._matrix[i, i]
+            false_positives.append(fp_count)
+        return np.sum(false_positives)
 
     def find_TN(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
-        # counts the number of true negatives (y = 0, y_pred = 0)
-        # return np.sum((y_true == 0) & (y_pred == 1))
+        """
+        This method counts the number of true negatives.
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: int
+        """
         return len(y_true)**2 - (self.find_FN(y_true, y_pred) +
                                  self.find_FP(y_true, y_pred) +
                                  self.find_TP(y_true, y_pred))
 
-    #@override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
         """
         Evaluates confusion matrix
-        :param y_true: ground truth data
-        :param y_pred: observations
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
         :return: ndarray representing the matrix
         """
         self._check_matrix(y_pred, y_true)
         return deepcopy(self._matrix)
 
 
-
-
 class Accuracy(Metric):
-
-    def __init__(self):
+    """
+    The Accuracy metric class.
+    """
+    def __init__(self) -> None:
+        """
+        The constructor for the Accuracy metric class.
+        :return: None
+        """
         super().__init__()
         self.type = 'classification'
         self.name = "Accuracy"
 
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """
+        Evaluates accuracy
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: float
+        """
         return (np.sum(y_true == y_pred)/len(y_true))/100
 
 
@@ -255,12 +258,21 @@ class Precision(ConfusionMatrix):
     """
     Focuses on type I error of False Positives.
     """
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        The constructor for the Precision metric class.
+        :return: None
+        """
         super().__init__()
         self.name = "Precision"
 
-    # @override CHANGED NAME!!! from evaluate to evaluate_precision...
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """
+        Evaluates precision
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: float
+        """
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
         return TP/(TP+FP)
@@ -270,24 +282,45 @@ class Recall(ConfusionMatrix):
     """
     Focuses on type II error of False Negatives.
     """
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        The constructor for the Recall metric class.
+        :return: None
+        """
         super().__init__()
         self.name = "Recall"
 
-    # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """
+        Evaluates recall
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: float
+        """
         TP = super().find_TP(y_true, y_pred)
         FN = super().find_FN(y_true, y_pred)
         return TP/(TP+FN)
 
 
 class RootMeanSquaredError(MeanSquaredError):
-    def __init__(self):
+    """
+    The Root Mean Squared Error metric class.
+    """
+    def __init__(self) -> None:
+        """
+        The constructor for the Root Mean Squared Error metric class.
+        :return: None
+        """
         super().__init__()
         self.name = "Root Mean Squared Error"
 
-    # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """
+        Evaluates root mean squared error
+        :param y_true: np.ndarray
+        :param y_pred: np.ndarray
+        :return: float
+        """
         return np.sqrt(super().evaluate(y_true, y_pred))
 
 
