@@ -69,8 +69,8 @@ class PreprocessingHandler():
 
     def _can_load_existing_pipelines(self):
         pipe1 = self.automl.registry.list(type="pipeline")[0]
-        st.write(pipe1.id, pipe1.name, pipe1.asset_path)
-        st.write(pipe1.data)
+        # st.write(pipe1.id, pipe1.name, pipe1.asset_path)
+        # st.write(pipe1.data)
         return len(self.automl.registry.list(type="pipeline")) > 0
 
     def load_pipeline(self):
