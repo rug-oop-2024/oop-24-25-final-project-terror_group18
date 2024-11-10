@@ -340,8 +340,9 @@ class PreprocessingHandler():
 
                             observations_columns_count = len(
                                 self._selection_observations)
-                            if (self._model.type == "regression"
-                                    and observations_columns_count == 1):
+                            if ((
+                                self._model.type == "regression") and (
+                                    observations_columns_count == 1)):
                                 plt.figure(figsize=(10, 6))
                                 plt.scatter(test_x, tes_y, color='blue',
                                             label='Actual Test Data')

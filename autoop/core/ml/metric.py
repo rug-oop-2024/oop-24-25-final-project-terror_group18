@@ -3,6 +3,7 @@ from copy import deepcopy
 from typing import Any
 import numpy as np
 from autoop.core.ml.ml_type import MLType
+from typing import Callable
 
 METRICS_CLASSIFICATION = [
     "Accuracy",
@@ -51,7 +52,7 @@ class Metric(ABC, MLType):
         """
         self._metrics.append(self)
 
-    def __call__(self, y_true: np.ndarray, y_pred: np.ndarray):
+    def __call__(self, y_true: np.ndarray, y_pred: np.ndarray) -> Callable:
         """
         The call method for the Metric class.
         :param y_true: np.ndarray
@@ -86,12 +87,12 @@ class Metric(ABC, MLType):
         return deepcopy(self._metrics)
 
     @abstractmethod
-    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> Any:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
         """
         The abstract method for the evaluate method.
         :param y_true: np.ndarray
         :param y_pred: np.ndarray
-        :return: Any"""
+        :return: None"""
         pass
 
 
@@ -251,7 +252,7 @@ class Accuracy(Metric):
         :param y_pred: np.ndarray
         :return: float
         """
-        return (np.sum(y_true == y_pred)/len(y_true))/100
+        return (np.sum(y_true == y_pred) / len(y_true)) / 100
 
 
 class Precision(ConfusionMatrix):
