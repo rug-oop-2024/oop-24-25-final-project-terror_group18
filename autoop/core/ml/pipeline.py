@@ -140,6 +140,12 @@ Pipeline(
 
     @staticmethod
     def from_artifact(artifact: Artifact, automl: AutoMLSystem) -> 'Pipeline':
+        """
+        The method that converts an artifact to a pipeline.
+        :param artifact: Artifact
+        :param automl: AutoMLSystem
+        :return: Pipeline
+        """
         print(artifact.type)
         pipeline_data = pickle.loads(artifact.data.decode())
         ds = None
