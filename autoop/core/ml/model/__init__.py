@@ -21,9 +21,6 @@ CLASSIFICATION_MODELS = [
 
 def get_model(model_name: str) -> Model:
     """Factory function to get a model by name."""
-    # -models[] remains empty always ->fix
-
-
 
     if model_name == "Multiple Linear Regression":
         return MultipleLinearRegression()
@@ -37,13 +34,3 @@ def get_model(model_name: str) -> Model:
         return KNearestNeighbors()
     elif model_name == "Support Vector Classifier":
         return SupportVectorClassifier()
-    
-
-    # try:
-    #     for model in models_list:
-    #         if model.name == model_name:
-    #             return model
-    # except Exception as e:
-    #     print(type(models_list), models_list)
-    #     print(e)
-    # return None
