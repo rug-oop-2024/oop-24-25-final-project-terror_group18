@@ -1,11 +1,6 @@
+from app.core.ui_utils import DataHandler
 import streamlit as st
-import pandas as pd
 
-from app.core.system import AutoMLSystem
-from autoop.core.ml.dataset import Dataset
-
-automl = AutoMLSystem.get_instance()
-
-datasets = automl.registry.list(type="dataset")
-
-# your code here
+session_data_handler = DataHandler()
+st.session_state['data_handler'] = session_data_handler
+session_data_handler.run()
