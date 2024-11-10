@@ -138,7 +138,6 @@ class LocalStorage(Storage):
         Returns:
             None
         """
-        path = self._join_path(path)
         if not os.path.exists(path):
             raise NotFoundError(path)
 
