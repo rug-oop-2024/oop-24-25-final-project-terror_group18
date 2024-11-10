@@ -6,7 +6,6 @@ from autoop.core.ml.model.base_model import Model
 
 class KNearestNeighbors(Model):
 
-    _model = None
     def __init__(self, n_neighbors=5):
         super().__init__()
         self.type = "classification"

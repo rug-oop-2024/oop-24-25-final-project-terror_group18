@@ -159,7 +159,7 @@ class PreprocessingHandler():
                 placeholder="Select one or more metrics...",
                 key=f"multiselect_metrics_{i}"
             )
-        if len(self._metric_choice) != 0:
+        if len(self._metric_choice) == 0:
             st.markdown(
                 ''':red[*You have not selected a metric yet!*]''')
             return False
