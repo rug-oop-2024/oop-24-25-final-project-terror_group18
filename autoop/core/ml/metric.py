@@ -135,17 +135,29 @@ class ConfusionMatrix(Metric):
         self._matrix = None
         self.name = "Confusion Matrix"
 
-    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
-        #docstring???
+    def _generate_matrix(self, y_true: np.ndarray, y_pred: np.ndarray)-> np.ndarray:
         """
-        # Theis method checks if the matrix is already created.
+        Generates confusion matrix
+        :param y_true: ground truth data
+        :param y_pred: observations
+        :return: ndarray representing the matrix
+        """
+        keys = list(dict.fromkeys(y_pred))
+        n = len(keys)
+        matrix = np.zeros((n, n))
+        for pdata, tdata in y_pred, y_true:
+            matrix[keys.index(pdata)][keys.index(tdata)] += 1
+        return matrix
+
+    def _check_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
+        """
+        # This method checks if the matrix is already created.
         # :param y_true: np.ndarray
         # :param y_pred: np.ndarray
         # :return: None
         """
-
         if self._matrix is None:
-            self.evaluate(y_true, y_pred)
+            self._generate_matrix(y_true, y_pred)
 
     def find_TP(self, y_true: np.ndarray, y_pred: np.ndarray) -> int:
         """
@@ -189,13 +201,16 @@ class ConfusionMatrix(Metric):
 
     # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+        """
+        Evaluates confusion matrix
+        :param y_true: ground truth data
+        :param y_pred: observations
+        :return: ndarray representing the matrix
+        """
+        self._check_matrix(y_pred, y_true)
+        return deepcopy(self._matrix)
 
-        keys = list(dict.fromkeys(y_pred))
-        n = len(keys)
-        matrix = np.zeros((n, n))
-        for pdata, tdata in y_pred, y_true:
-            matrix[keys.index(pdata)][keys.index(tdata)] += 1
-        return matrix
+
 
 
 class Accuracy(Metric):
@@ -208,6 +223,7 @@ class Accuracy(Metric):
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return (np.sum(y_true == y_pred)/len(y_true))/100
 
+
 class Precision(ConfusionMatrix):
     """
     Focuses on type I error of False Positives.
@@ -217,7 +233,7 @@ class Precision(ConfusionMatrix):
         self.name = "Precision"
 
     # @override CHANGED NAME!!! from evaluate to evaluate_precision...
-    def evaluate_precision(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         TP = super().find_TP(y_true, y_pred)
         FP = super().find_FP(y_true, y_pred)
         return TP/(TP+FP)
