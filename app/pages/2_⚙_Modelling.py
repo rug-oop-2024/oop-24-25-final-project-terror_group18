@@ -130,8 +130,8 @@ class PreprocessingHandler():
         A method to check if the dataset is uploaded.
         :return: bool
         """
-        if (self._dataframe is None or
-           'dataframe' not in st.session_state.keys()):
+        if ((self._dataframe is None) or (
+           'dataframe' not in st.session_state.keys())):
             st.write("Please upload your dataset in the \"Dataset\" page.")
             return False
         return True
@@ -354,8 +354,9 @@ class PreprocessingHandler():
                                           "Prediction Line of Best Fit")
                                 plt.legend()
                                 st.pyplot(plt.gcf())
-                            elif (self._model.type == "classification"
-                                  and observations_columns_count == 2):
+                            elif ((
+                                self._model.type == "classification") and (
+                                    observations_columns_count == 2)):
                                 plt.figure(figsize=(10, 6))
                                 unique_classes = np.unique(tes_y)
 
