@@ -280,7 +280,7 @@ class RootMeanSquaredError(MeanSquaredError):
 
     # @override
     def evaluate(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        return np.sqrt(super())
+        return np.sqrt(super().evaluate(y_true, y_pred))
 
 
 MeanSquaredError()
